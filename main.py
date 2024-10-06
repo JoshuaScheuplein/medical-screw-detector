@@ -1,0 +1,152 @@
+import argparse
+import os
+import signal
+import torch
+import wandb
+
+from pytorch_lightning import Trainer
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.loggers import CSVLogger
+from pytorch_lightning.plugins.environments import SLURMEnvironment
+from pytorch_lightning.loggers import WandbLogger
+
+from torch.utils.data import DataLoader
+
+from dataset.DatasetBuilder import build_dataset, custom_collate_fn
+from lightning.prediction_logging_callback import PredictionLoggingCallback
+from lightning.detr_model import DeformableDETRLightning
+from utils.custom_arg_parser import get_args_parser
+
+
+def main(args):
+
+    #########################
+    # init logger
+    #########################
+
+    if args.log_wandb:
+        wandb.login(key="fc47046192188490a1fcedc7a411218e15247c56")
+
+
+        if args.use_enc_aux_loss:
+            wandb_run_identifier = f"Sparse DETR with {args.backbone}"
+        elif args.eff_query_init:
+            wandb_run_identifier = f"Efficient DETR with {args.backbone}"
+        else:
+            wandb_run_identifier = f"Deformable DETR with {args.backbone}"
+
+        logger = WandbLogger(project="Deformable DETR for dense image recognition",
+                             name=wandb_run_identifier,
+                             config=vars(args),
+                             save_dir=args.result_dir)
+    else:
+        logger = CSVLogger("logs", name="local_log")
+
+    #########################
+    # init dataloader
+    #########################
+
+    dataset_train = build_dataset(image_set='train', args=args)
+    dataset_val = build_dataset(image_set='val', args=args)
+    dataset_test = build_dataset(image_set='test', args=args)
+
+    sampler_train = torch.utils.data.RandomSampler(dataset_train)
+    sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    sampler_test = torch.utils.data.SequentialSampler(dataset_test)
+
+    batch_sampler_train = torch.utils.data.BatchSampler(
+        sampler_train, args.batch_size, drop_last=True)
+
+    data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
+                                   collate_fn=custom_collate_fn, num_workers=args.num_workers,
+                                   pin_memory=False)
+    data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val,
+                                 drop_last=False, collate_fn=custom_collate_fn, num_workers=args.num_workers,
+                                 pin_memory=False)
+
+    data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test,
+                                 drop_last=False, collate_fn=custom_collate_fn, num_workers=args.num_workers)
+
+    #########################
+    # init callbacks
+    #########################
+
+    # saves top-K checkpoints based on "train_loss" metric
+    checkpoint_train_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="train_loss",
+        mode="min",
+        dirpath=args.result_dir,
+        filename="sample-train_loss-{epoch:02d}-{train_loss:.2f}",
+        save_last=True
+    )
+
+    # saves top-K checkpoints based on "val_loss" metric
+    checkpoint_val_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="val_loss",
+        mode="min",
+        dirpath=args.result_dir,
+        filename="sample-val_loss-{epoch:02d}-{val_loss:.2f}",
+        save_last=False
+    )
+
+    for dataset in [dataset_train, dataset_val, dataset_test]:
+        for volume_name in dataset.volume_names:
+            prediction_path = os.path.join(args.result_dir,
+                                           os.path.basename(os.path.normpath(dataset.data_dir)),
+                                           volume_name)
+            os.makedirs(prediction_path, exist_ok=True)
+
+    prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
+
+    #########################
+    # Train the Model
+    #########################
+
+    detr_model = DeformableDETRLightning(args)
+
+    if os.name == 'nt':
+        plugins = []
+    else:
+        plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
+
+    trainer = Trainer(max_epochs=args.epochs,
+                      logger=logger,
+                      devices=1,
+                      num_nodes=1,
+                      default_root_dir=args.result_dir,
+                      log_every_n_steps=100,
+                      callbacks=[checkpoint_val_callback, prediction_logging_callback],
+                      plugins=plugins)
+
+    last_ckpt_file = args.result_dir + "/last.ckpt"
+    if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
+        args.checkpoint_file = last_ckpt_file
+
+    trainer.fit(model=detr_model,
+                train_dataloaders=data_loader_train,
+                val_dataloaders=data_loader_val,
+                ckpt_path=args.checkpoint_file)
+
+    #########################
+    # Test the Model
+    #########################
+
+    trainer.test(model=detr_model,
+                 dataloaders=data_loader_test)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser('Deformable DETR Detector for implants', parents=[get_args_parser()])
+    args = parser.parse_args()
+
+    try:
+        os.mkdir(args.result_dir)
+        print(f"Directory '{args.result_dir}' created successfully.")
+    except FileExistsError:
+        print(f"Directory '{args.result_dir}' already exists.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+    main(args)
