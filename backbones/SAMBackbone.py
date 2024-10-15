@@ -53,7 +53,7 @@ class SAMBackbone(BaseBackbone):
         Input image batch of shape (B, C, H, W) 
         Return the embeddings of the image as list of tensors of shape (B, num_channel, embedding_size, embedding_size)
     '''
-    def forward(self, img_batch: np.ndarray) -> list[Tensor]:
+    def forward(self, img_batch):
 
         features = []
 

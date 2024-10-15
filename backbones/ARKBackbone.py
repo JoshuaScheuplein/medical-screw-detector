@@ -74,7 +74,7 @@ class ARKBackbone(BaseBackbone):
 
         self.backbone = timm_model.cuda()
 
-    def forward(self, img_batch: np.ndarray) -> list[Tensor]:
+    def forward(self, img_batch):
         b, _W, _H = img_batch.shape
 
         transformed_patches = []

@@ -56,7 +56,7 @@ class V1RandomSizeCrop:
         self.min_size = min_size
         self.max_size = max_size
         self.backbone_image_size = backbone.image_size
-        self.resize_transform = transforms.Resize(self.backbone_image_size, antialias=True)
+        self.resize_transform = transforms.Resize(self.backbone_image_size)
 
     def __call__(self, projection: tensor, target: dict):
         if "screws" in target:

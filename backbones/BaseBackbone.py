@@ -4,7 +4,7 @@ from torch import nn, Tensor
 
 class BaseBackbone(nn.Module):
 
-    def __init__(self, num_channels: list[int], image_size: int, embedding_size: list[int], args):
+    def __init__(self, num_channels, image_size, embedding_size, args):
         super().__init__()
         self.num_channels = num_channels
         self.image_size = image_size
@@ -17,7 +17,7 @@ class BaseBackbone(nn.Module):
     def instantiate(self):
         raise NotImplementedError("")
 
-    def forward(self, img_batch: np.ndarray) -> list[Tensor]:
+    def forward(self, img_batch):
         raise NotImplementedError("")
 
 

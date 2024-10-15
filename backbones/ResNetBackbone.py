@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 from torch import Tensor
-from torchvision.models import resnet50, resnet101, ResNet50_Weights, ResNet101_Weights
+from torchvision.models import resnet50, resnet101
 import torchvision.transforms as T
 from torchvision.models._utils import IntermediateLayerGetter
 
@@ -32,14 +32,14 @@ class ResNetBackbone(BaseBackbone):
 
     def instantiate(self):
         if self.args.backbone == 'resnet50' or self.args.backbone == 'resnet50_single':
-            self.backbone = resnet50(weights=ResNet50_Weights.DEFAULT).cuda()
+            self.backbone = resnet50(weights='DEFAULT').cuda()
             self.ilg = IntermediateLayerGetter(self.backbone, {'layer2': '2', 'layer3': '3', 'layer4': '4'})
 
         elif self.args.backbone == 'resnet101' or self.args.backbone == 'resnet101_single':
-            self.backbone = resnet101(weights=ResNet101_Weights.DEFAULT).cuda()
+            self.backbone = resnet101(weights='DEFAULT').cuda()
             self.ilg = IntermediateLayerGetter(self.backbone, {'layer2': '2', 'layer3': '3', 'layer4': '4'})
 
-    def forward(self, img_batch: np.ndarray) -> list[Tensor]:
+    def forward(self, img_batch):
 
         transformed_images = []
 
