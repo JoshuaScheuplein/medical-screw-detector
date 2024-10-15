@@ -1,6 +1,8 @@
 from backbones.ARKBackbone import ARKBackbone
 from backbones.DinoBackbone import DinoBackbone
 from backbones.Joiner import Joiner
+from backbones.MedicalResNet import MedicalResNet
+from backbones.MedicalViT import MedicalViT
 from backbones.PositionEncoding import build_position_encoding
 from backbones.ResNetBackbone import ResNetBackbone
 from backbones.SAMBackbone import SAMBackbone
@@ -29,6 +31,10 @@ def get_backbone(args):
         backbone = ARKBackbone(args)
     elif args.backbone in ["sam2_base", "sam2_large"]:
         backbone = SAM2Backbone(args)
+    elif args.backbone in ["medical_resnet50"]:
+        backbone = MedicalResNet(args)
+    elif args.backbone in ["medical_vit_s_8", "medical_vit_s_16"]:
+        backbone = MedicalViT(args)
 
     else:
         raise ValueError(f"Invalid backbone type: {args.backbone}")

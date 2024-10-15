@@ -72,9 +72,9 @@ class SetCriterion(nn.Module):
         """
         pred_logits = outputs['pred_logits']
         device = pred_logits.device
-        tgt_lengths = torch.as_tensor([len(v["labels"]) for v in targets], device=device)
+        tgt_lengths = torch.tensor([len(v["labels"]) for v in targets], device=device)
         # Count the number of predictions that are NOT "no-object" (which is the last class)
-        card_pred = (pred_logits > 0.).sum(1).squeeze()
+        card_pred = (pred_logits > 0.).sum(1).squeeze(dim=1)
         card_err = nn.functional.l1_loss(card_pred.float(), tgt_lengths.float())
         losses = {'cardinality_error': card_err}
         return losses
@@ -87,7 +87,6 @@ class SetCriterion(nn.Module):
 
         head_tip_thresholds = torch.arange(1, 11, 1, device=outputs['pred_screws'].device).view(1, -1)
         midpoint_angle_thresholds = torch.arange(1, 11, 1, device=outputs['pred_screws'].device).view(1, -1)
-        iou_thresholds = torch.arange(0.5, 1.0, 0.05, device=outputs['pred_screws'].device).view(1, -1)
 
         idx = self._get_src_permutation_idx(indices)
         src_screws = outputs['pred_screws'][idx]
@@ -115,28 +114,28 @@ class SetCriterion(nn.Module):
                 num_screws_in_outputs -= 1
                 num_screws_in_targets -= 1
 
-                print("Warning: Screw out of image bounds.")
-
+                # debug
+                # print("Warning: Screw out of image bounds.")
 
         correct_head = head_distances < head_tip_thresholds
         TP_head = torch.sum(correctly_classified & correct_head, dim=0)
-        precision_head = TP_head / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device)
-        recall_head = TP_head / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device)
+        precision_head = TP_head / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
+        recall_head = TP_head / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
 
         correct_tip = tip_distances < head_tip_thresholds
         TP_tip = torch.sum(correctly_classified & correct_tip, dim=0)
-        precision_tip = TP_tip / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_tip, device=TP_tip.device)
-        recall_tip = TP_tip / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_tip, device=TP_tip.device)
+        precision_tip = TP_tip / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_tip, device=TP_tip.device, dtype=torch.float32)
+        recall_tip = TP_tip / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_tip, device=TP_tip.device, dtype=torch.float32)
 
         correct_midpoint = midpoint_distances < midpoint_angle_thresholds
         TP_midpoint = torch.sum(correctly_classified & correct_midpoint, dim=0)
-        precision_midpoint = TP_midpoint / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device)
-        recall_midpoint = TP_midpoint / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device)
+        precision_midpoint = TP_midpoint / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
+        recall_midpoint = TP_midpoint / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
 
         correct_angle = angle_distances < midpoint_angle_thresholds
         TP_angle = torch.sum(correctly_classified & correct_angle, dim=0)
-        precision_angle = TP_angle / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device)
-        recall_angle = TP_angle / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device)
+        precision_angle = TP_angle / num_screws_in_targets if num_screws_in_targets > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
+        recall_angle = TP_angle / num_screws_in_outputs if num_screws_in_outputs > 0 else torch.zeros_like(TP_head, device=TP_head.device, dtype=torch.float32)
 
         losses = {}
 

@@ -38,7 +38,7 @@ class DefaultArgs:
     dropout=0.1
     nheads=8
     num_classes=1
-    num_queries=20
+    num_queries=300
     dec_n_points=4
     enc_n_points=4
 
@@ -47,8 +47,8 @@ class DefaultArgs:
     eff_specific_head=True
 
     # * Sparse DETR
-    use_enc_aux_loss=False
-    rho=0.
+    use_enc_aux_loss=True
+    rho=0.1
 
     # * Alpha encoding
     alpha_correspondence=False
@@ -175,6 +175,9 @@ def get_args_parser():
     # * checkpointing
     parser.add_argument('--checkpoint_file', default=None, type=str,
                         help='path to checkpoint file')
+    # only needed for medical backbones
+    parser.add_argument('--backbone_checkpoint_file', default=None, type=str,
+                        help='path to backbone checkpoint file')
     parser.add_argument('--result_dir', default=DefaultArgs.result_dir, type=str,
                         help='directory to store results like logs and checkpoints')
 
