@@ -57,6 +57,9 @@ def get_meta_data(data_dir, volume_name):
         detector_shape = labels["landmarks2d"][f"view_0"]["detector_shape"]
         pixel_size = labels["landmarks2d"][f"view_0"]["pixel_size"]
 
+    detector_shape = None,
+    pixel_size = None
+
     return detector_shape, pixel_size
 
 
