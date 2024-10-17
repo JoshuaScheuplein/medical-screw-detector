@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 
 import numpy as np
-import torch
 
+import torch
+import torchvision.transforms as T
 from torch import Tensor, nn
 from torchvision import models
 
@@ -20,7 +21,7 @@ class MedicalResNet(BaseBackbone):
                 self.checkpoint_file = args.backbone_checkpoint_file
             image_size = 976 
             channels = [256, 512, 1024, 2048]
-            embedding_size = [244, 124, 62, 31]
+            embedding_size = [244, 122, 61, 31]
 
         else:
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
@@ -28,6 +29,7 @@ class MedicalResNet(BaseBackbone):
         super().__init__(num_channels=channels, image_size=image_size, embedding_size=embedding_size, args=args)
 
     def instantiate(self):
+
         checkpoint = torch.load(Path(self.checkpoint_file), map_location="cpu")
         teacher_checkpoint = checkpoint['teacher']
         # Discard all weights and parameters belonging to DINOHead() ...
@@ -44,23 +46,66 @@ class MedicalResNet(BaseBackbone):
         self.backbone = self.backbone.cuda()
 
     '''
-        Input image batch of shape (B, C, H, W) 
-        Return the embeddings of the image as list of tensors of shape (B, num_channel, embedding_size, embedding_size)
+    Input image batch of shape (B, C, H, W) 
+    Return the embeddings of the image as list of tensors of shape (B, num_channel, embedding_size, embedding_size)
     '''
     def forward(self, img_batch: np.ndarray) -> list[Tensor]:
 
-        features = []
+        transformed_images = []
 
         for img in img_batch:
-
             img = np.expand_dims(img, axis=0)
             img = np.repeat(img, 3, axis=0)
             img = np.transpose(img, (1, 2, 0))
 
-            self.backbone.set_image(img)
-            features.append(torch.squeeze(self.backbone.get_image_embedding()))
+            transform = T.Compose([
 
-            # from head_tip_segmentation.scripts.check_sam import plot_pca_preview
-            # plot_pca_preview(img, features[0], 256, 64, show=True)
+                '''Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
+                to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1)
+                or if the numpy.ndarray has dtype = np.uint8'''
+                T.ToTensor(),
 
-        return [torch.stack(features)]
+                ''' Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0] '''
+                # lambda x: 255.0 * x,  # scale by 255
+
+            ])
+
+            transformed_images.append(transform(img))
+
+        img_batch = torch.stack(transformed_images)
+        img_batch = img_batch.to(self.args.device)
+
+        self.backbone.eval()
+        extracted_features = []
+        with torch.no_grad():
+            for i, layer in enumerate(self.backbone):
+                x = layer(x)
+                if 4 <= i and i <= 7:
+                    assert x.shape[1:] == (self.channels[i-4], self.embedding_size[i-4], self.embedding_size[i-4])
+                    extracted_features.append(x)
+
+        return extracted_features
+
+
+    # '''
+    #     Input image batch of shape (B, C, H, W) 
+    #     Return the embeddings of the image as list of tensors of shape (B, num_channel, embedding_size, embedding_size)
+    # '''
+    # def forward(self, img_batch: np.ndarray) -> list[Tensor]:
+
+    #     features = []
+
+    #     for img in img_batch:
+
+    #         img = np.expand_dims(img, axis=0)
+    #         img = np.repeat(img, 3, axis=0)
+    #         img = np.transpose(img, (1, 2, 0))
+
+    #         self.backbone.set_image(img)
+    #         features.append(torch.squeeze(self.backbone.get_image_embedding()))
+
+    #         # from head_tip_segmentation.scripts.check_sam import plot_pca_preview
+    #         # plot_pca_preview(img, features[0], 256, 64, show=True)
+
+    #     return [torch.stack(features)]

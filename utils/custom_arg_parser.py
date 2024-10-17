@@ -175,10 +175,14 @@ def get_args_parser():
     # * checkpointing
     parser.add_argument('--checkpoint_file', default=None, type=str,
                         help='path to checkpoint file')
+
     # only needed for medical backbones
     parser.add_argument('--backbone_checkpoint_file', default=None, type=str,
                         help='path to backbone checkpoint file')
     parser.add_argument('--result_dir', default=DefaultArgs.result_dir, type=str,
                         help='directory to store results like logs and checkpoints')
+
+    # Additionally added
+    # parser.add_argument('--job_ID', default="Test_Job", type=str, help='Unique job ID')                    
 
     return parser

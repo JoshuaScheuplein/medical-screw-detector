@@ -25,20 +25,38 @@ def main(args):
     #########################
 
     if args.log_wandb:
-        wandb.login(key="fc47046192188490a1fcedc7a411218e15247c56")
 
+        # wandb.login(key="fc47046192188490a1fcedc7a411218e15247c56")
+        wandb.login(key="b8b1693523deba0245ee3284c25847b029261f90")
+
+        job_ID = args.backbone_checkpoint_file.split("/")[-1]
+        assert "DINO_Training_" in job_ID
+        job_ID = job_ID.split("DINO_Training_")[-1]
+        job_ID = job_ID.replace(".pth", "")
 
         if args.use_enc_aux_loss:
-            wandb_run_identifier = f"Sparse DETR with {args.backbone}"
+            wandb_run_identifier = f"Sparse_DETR_{args.backbone}_{job_ID}"
         elif args.eff_query_init:
-            wandb_run_identifier = f"Efficient DETR with {args.backbone}"
+            wandb_run_identifier = f"Efficient_DETR_{args.backbone}_{job_ID}"
         else:
-            wandb_run_identifier = f"Deformable DETR with {args.backbone}"
+            wandb_run_identifier = f"Deformable_DETR_{args.backbone}_{job_ID}"
 
-        logger = WandbLogger(project="Deformable DETR for dense image recognition",
-                             name=wandb_run_identifier,
-                             config=vars(args),
-                             save_dir=args.result_dir)
+        # logger = WandbLogger(project="Deformable DETR for dense image recognition",
+        #                      name=wandb_run_identifier,
+        #                      config=vars(args),
+        #                      save_dir=args.result_dir)
+
+        logger = WandbLogger(project="MedDINO",
+                             group="Screw-Detection", # organize individual runs into a larger experiment
+                             entity="joshua-scheuplein", # username
+                             name=wandb_run_identifier, # general job descriptor
+                             id=wandb_run_identifier, # unique job descriptor
+                             config=args, # save settings and hyperparameters
+                             save_dir=args.result_dir, # where to store wandb files
+                             save_code=True, # save main script
+                             resume="allow", # needed in case of preempted job
+                             )
+                   
     else:
         logger = CSVLogger("logs", name="local_log")
 
@@ -54,12 +72,12 @@ def main(args):
     sampler_val = torch.utils.data.SequentialSampler(dataset_val)
     sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
-    batch_sampler_train = torch.utils.data.BatchSampler(
-        sampler_train, args.batch_size, drop_last=True)
+    batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
 
     data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
                                    collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                    pin_memory=False, persistent_workers=True)
+
     data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val,
                                  drop_last=False, collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                  pin_memory=False, persistent_workers=True)
@@ -138,6 +156,7 @@ def main(args):
 
 
 if __name__ == '__main__':
+    
     parser = argparse.ArgumentParser('Deformable DETR Detector for implants', parents=[get_args_parser()])
     args = parser.parse_args()
 

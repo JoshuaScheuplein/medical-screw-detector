@@ -26,9 +26,14 @@ def cluster_dataset_split():
     test_dirs = []
 
     for i in range(1, 4):
-        train_dirs = train_dirs + [f"{element}_le_512x512x512_{i}" for element in TRAINV1]
-        val_dirs = val_dirs + [f"{element}_le_512x512x512_{i}" for element in VALV1]
-        test_dirs = test_dirs + [f"{element}_le_512x512x512_{i}" for element in TESTV1]
+
+        train_dirs = train_dirs + [f"{element}_{i}" for element in TRAINV1]
+        val_dirs = val_dirs + [f"{element}_{i}" for element in VALV1]
+        test_dirs = test_dirs + [f"{element}_{i}" for element in TESTV1]
+
+        # train_dirs = train_dirs + [f"{element}_le_512x512x512_{i}" for element in TRAINV1]
+        # val_dirs = val_dirs + [f"{element}_le_512x512x512_{i}" for element in VALV1]
+        # test_dirs = test_dirs + [f"{element}_le_512x512x512_{i}" for element in TESTV1]
 
     return train_dirs, val_dirs, test_dirs
 
