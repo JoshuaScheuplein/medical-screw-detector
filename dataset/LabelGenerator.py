@@ -49,13 +49,13 @@ def generate_labels(labels, view_idx):
 
 
 def get_meta_data(data_dir, volume_name):
-    volume_path = os.path.join(data_dir, volume_name)
-    labels_path = os.path.join(volume_path, "labels.json")
+    # volume_path = os.path.join(data_dir, volume_name)
+    # labels_path = os.path.join(volume_path, "labels.json")
 
-    with open(labels_path) as labels_file:
-        labels = json.load(labels_file)
-        detector_shape = labels["landmarks2d"][f"view_0"]["detector_shape"]
-        pixel_size = labels["landmarks2d"][f"view_0"]["pixel_size"]
+    # with open(labels_path) as labels_file:
+    #     labels = json.load(labels_file)
+    #     detector_shape = labels["landmarks2d"][f"view_0"]["detector_shape"]
+    #     pixel_size = labels["landmarks2d"][f"view_0"]["pixel_size"]
 
     detector_shape = None,
     pixel_size = None
