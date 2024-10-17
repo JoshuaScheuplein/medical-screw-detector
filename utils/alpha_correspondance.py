@@ -272,7 +272,7 @@ def project_to_second_view(P0, P1, reference_points):
     return x0_pts, d
 
 def verify_projection():
-    base = "E:\MA_Data\V1-1to3objects-400projections-circular"
+    # base = "E:\MA_Data\V1-1to3objects-400projections-circular"
     dir = "Elbow03_le_512x512x512_2"
 
     predictions = json.load(open(f"{base}/{dir}/labels.json"))
@@ -367,7 +367,7 @@ def verify_projection():
 
 
 def projection_in_image(view_id, orthogonal_view_id):
-    base = "E:\MA_Data\V1-1to3objects-400projections-circular"
+    # base = "E:\MA_Data\V1-1to3objects-400projections-circular"
     dir = "Elbow03_le_512x512x512_2"
 
     predictions = json.load(open(f"{base}/{dir}/labels.json"))
