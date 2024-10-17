@@ -19,7 +19,8 @@ def cluster_dataset_split():
                'Elbow02', 'Elbow03', 'Knee01', 'Knee02', 'Knee03', 'Knee04', 'Knee05', 'Knee06', 'Knee07',
                'Knee08', 'Knee09', 'Leg01', 'Spine01', 'Spine02', 'Spine03', 'Spine04', 'Spine05', 'Wrist01', 'Wrist02',
                'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07', ] # Foot01_3 missing ... 
-    VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ]
+    # VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ]
+    VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Elbow04_3 missing ...
     TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ]
 
     print(f"volumes for training: {TRAINV1}")
