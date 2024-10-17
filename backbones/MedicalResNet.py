@@ -60,13 +60,17 @@ class MedicalResNet(BaseBackbone):
 
             transform = T.Compose([
 
-                '''Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
+                '''
+                Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
                 to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
                 if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1)
-                or if the numpy.ndarray has dtype = np.uint8'''
+                or if the numpy.ndarray has dtype = np.uint8
+                '''
                 T.ToTensor(),
 
-                ''' Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0] '''
+                '''
+                Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0]
+                '''
                 # lambda x: 255.0 * x,  # scale by 255
 
             ])
