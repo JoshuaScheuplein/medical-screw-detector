@@ -2,11 +2,11 @@ import os
 from pathlib import Path
 
 import numpy as np
+
 import torch
-
 from torch import Tensor
-from transformers.models import vits
 
+import vision_transformer as vits
 from backbones.BaseBackbone import BaseBackbone
 
 
