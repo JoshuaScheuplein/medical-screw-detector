@@ -43,6 +43,10 @@ class MedicalResNet(BaseBackbone):
 
         resnet50.eval() # Activate evaluation mode
         self.backbone = resnet50
+
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+            
         self.backbone = self.backbone.cuda()
 
     '''
