@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-import vision_transformer as vits
+# from vision_transformer import vit_small
 from backbones.BaseBackbone import BaseBackbone
 
 
