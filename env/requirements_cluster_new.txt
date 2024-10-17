@@ -34,7 +34,7 @@ distro-info # install any (i.e., latest) version
 docker-pycreds==0.4.0
 dulwich==0.19.15
 entrypoints==0.3
-fail2ban==0.11.1
+# fail2ban==0.11.1
 fastimport==0.9.8
 filelock==3.0.12
 frozenlist==1.4.1
