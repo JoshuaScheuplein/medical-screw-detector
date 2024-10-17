@@ -39,8 +39,11 @@ def generate_labels_batched(labels_path, images_per_volume):
 
 
 def generate_labels(labels, view_idx):
-    objects = labels["landmarks2d"][f"view_{view_idx}"]["objects"]
-    p_pfw = np.array(labels["landmarks2d"][f"view_{view_idx}"]["P_pfw"]).reshape((3, 4))
+    # objects = labels["landmarks2d"][f"view_{view_idx}"]["objects"]
+    # p_pfw = np.array(labels["landmarks2d"][f"view_{view_idx}"]["P_pfw"]).reshape((3, 4))
+
+    objects = None
+    p_pfw = None
 
     return objects, p_pfw
 
