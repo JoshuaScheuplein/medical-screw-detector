@@ -20,7 +20,7 @@ class MedicalResNet(BaseBackbone):
                 self.checkpoint_file = args.backbone_checkpoint_file
             else:
                 self.checkpoint_file = args.backbone_checkpoint_file
-                
+
             self.image_size = 976 
             self.channels = [256, 512, 1024, 2048]
             self.embedding_size = [244, 122, 61, 31]
@@ -28,7 +28,7 @@ class MedicalResNet(BaseBackbone):
         else:
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
 
-        super().__init__(num_channels=channels, image_size=image_size, embedding_size=embedding_size, args=args)
+        super().__init__(num_channels=self.channels, image_size=self.image_size, embedding_size=self.embedding_size, args=args)
 
     def instantiate(self):
 
