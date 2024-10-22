@@ -15,13 +15,15 @@ class MedicalResNet(BaseBackbone):
     def __init__(self, args):
 
         if args.backbone.lower() == 'medical_resnet50':
+
             if os.name == 'nt':
                 self.checkpoint_file = args.backbone_checkpoint_file
             else:
                 self.checkpoint_file = args.backbone_checkpoint_file
-            image_size = 976 
-            channels = [256, 512, 1024, 2048]
-            embedding_size = [244, 122, 61, 31]
+                
+            self.image_size = 976 
+            self.channels = [256, 512, 1024, 2048]
+            self.embedding_size = [244, 122, 61, 31]
 
         else:
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
