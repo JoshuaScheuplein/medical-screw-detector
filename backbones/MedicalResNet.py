@@ -83,6 +83,7 @@ class MedicalResNet(BaseBackbone):
         self.backbone.eval()
         extracted_features = []
         with torch.no_grad():
+            x = img_batch
             for i, layer in enumerate(self.backbone):
                 x = layer(x)
                 if 4 <= i and i <= 7:
