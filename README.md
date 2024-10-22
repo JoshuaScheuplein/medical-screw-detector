@@ -32,10 +32,10 @@ python main.py
 
 ### ResNet50 Test
 ```
-python main.py --backbone medical_resnet50 --dataset_reduction 10 --lr 0.00004 --lr_backbone 0.000004 --batch_size 2 --epochs 5 --lr_drop_epochs 2 --data_dir /home/vault/iwi5/iwi5165h/2024-04-Scheuplein-Screw-Detection --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth
+srun python main.py --backbone medical_resnet50 --dataset_reduction 10 --lr 0.00004 --lr_backbone 0.000004 --batch_size 2 --epochs 5 --lr_drop_epochs 2 --data_dir /home/vault/iwi5/iwi5165h/2024-04-Scheuplein-Screw-Detection --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth
 ```
 
 ### ViT-S-16 Test
 ```
-python main.py --backbone medical_vit_s_16 --dataset_reduction 10 --lr 0.00004 --lr_backbone 0.000004 --batch_size 2 --epochs 5 --lr_drop_epochs 2 --data_dir /home/vault/iwi5/iwi5165h/2024-04-Scheuplein-Screw-Detection --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_small_DINO_Training_Job_037_ViT-S-16_0200.pth
+srun python main.py --backbone medical_vit_s_16 --dataset_reduction 10 --lr 0.00004 --lr_backbone 0.000004 --batch_size 2 --epochs 5 --lr_drop_epochs 2 --data_dir /home/vault/iwi5/iwi5165h/2024-04-Scheuplein-Screw-Detection --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_small_DINO_Training_Job_037_ViT-S-16_0200.pth
 ```
