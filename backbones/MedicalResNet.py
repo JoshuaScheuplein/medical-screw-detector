@@ -94,7 +94,8 @@ class MedicalResNet(BaseBackbone):
                     assert x.shape[1:] == (self.channels[i-4], self.embedding_size[i-4], self.embedding_size[i-4])
                     extracted_features.append(x)
 
-        return extracted_features
+        # return extracted_features
+        return [None]
 
 
     # '''
