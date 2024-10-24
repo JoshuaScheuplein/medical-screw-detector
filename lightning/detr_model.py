@@ -54,6 +54,8 @@ class DeformableDETRLightning(LightningModule):
         loss = sum(actual_loss_dict.values())
         self.log(f"{mode}_loss", loss, on_epoch=True, on_step=True, batch_size=batch_size)
 
+        print("Completed generic step!")
+
         return {"loss": loss, "prediction": prediction}
 
     def configure_optimizers(self):

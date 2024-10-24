@@ -51,6 +51,8 @@ class MedicalResNet(BaseBackbone):
             
         self.backbone = self.backbone.cuda()
 
+        print("\nSuccessfuly instantiated 'medical_resnet50' model (with .eval() mode and requires_grad=False)\n")
+
     '''
     Input image batch of shape (B, C, H, W) 
     Return the embeddings of the image as list of tensors of shape (B, num_channel, embedding_size, embedding_size)

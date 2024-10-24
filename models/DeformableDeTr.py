@@ -272,8 +272,7 @@ def build_detr(args):
     total_parameters = 0
     for parameter in backbone.parameters():
         total_parameters += parameter.numel()
-
-    print(total_parameters)
+    print(f"Total Backbone Parameters: {total_parameters}")
 
     model = DeformableDETR(
         backbone,
