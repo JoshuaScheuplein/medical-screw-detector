@@ -76,9 +76,9 @@ class DeformableTransformer(nn.Module):
         self._reset_parameters()
 
     def _log_args(self, *names):
-        print('==============')
+        print('=======================')
         print("\n".join([f"{name}: {getattr(self, name)}" for name in names]))
-        print('==============')
+        print('=======================')
 
     def _reset_parameters(self):
         for p in self.parameters():

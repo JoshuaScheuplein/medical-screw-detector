@@ -107,7 +107,6 @@ def main(args):
         dirpath=args.result_dir,
         filename="sample-val_loss-{epoch:02d}-{val_loss:.2f}",
         save_last=False,
-        save_on_train_epoch_end=False # Additionally added
     )
 
     for dataset in [dataset_train, dataset_val, dataset_test]:
@@ -136,7 +135,8 @@ def main(args):
                       num_nodes=1,
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100,
-                      callbacks=[checkpoint_val_callback, prediction_logging_callback],
+                      # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
+                      callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
                       plugins=plugins)
 
     last_ckpt_file = args.result_dir + "/last.ckpt"
