@@ -141,7 +141,6 @@ def main(args):
                       plugins=plugins,
                       enable_progress_bar=False,    # Disable progress bar for more detailed error logs
                       enable_model_summary=True,    # Enable detailed model summary
-                      progress_bar_refresh_rate=0   # Prevent refreshing to show full logs
                       )
 
     last_ckpt_file = args.result_dir + "/last.ckpt"
