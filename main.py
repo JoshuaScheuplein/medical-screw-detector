@@ -96,7 +96,7 @@ def main(args):
         mode="min",
         dirpath=args.result_dir,
         filename="sample-train_loss-{epoch:02d}-{train_loss:.2f}",
-        save_last=True
+        save_last=True # saves a last.ckpt copy whenever a checkpoint file gets saved
     )
 
     # saves top-K checkpoints based on "val_loss" metric
@@ -106,7 +106,8 @@ def main(args):
         mode="min",
         dirpath=args.result_dir,
         filename="sample-val_loss-{epoch:02d}-{val_loss:.2f}",
-        save_last=False
+        save_last=False,
+        save_on_train_epoch_end=False # Additionally added
     )
 
     for dataset in [dataset_train, dataset_val, dataset_test]:
