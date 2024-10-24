@@ -23,6 +23,8 @@ class V1CircularScrewDataset(V1CircularBaseDataset):
         target = self.generate_target(objects, p_pfw)
         projection, target = self.transform(projection, target)
 
+        print(f"Item idx: {idx}")
+
         if self.aux_view:
             # Get projection and target for orthogonal view
             volume_idx = idx // self.images_per_volume
