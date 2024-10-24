@@ -134,7 +134,7 @@ def main(args):
                       devices=1,
                       num_nodes=1,
                       default_root_dir=args.result_dir,
-                      log_every_n_steps=100,
+                      log_every_n_steps=100, # How often to log within steps
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
                       plugins=plugins,
