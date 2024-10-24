@@ -27,9 +27,9 @@ def cluster_dataset_split():
     # TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ]
     TESTV1 = ['Ankle18', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10', ] # Ankle20_3 missing ...
 
-    print(f"volumes for training: {TRAINV1}")
-    print(f"volumes for validation: {VALV1}")
-    print(f"volumes for testing: {TESTV1}")
+    print(f"\nVolumes for training: {TRAINV1}")
+    print(f"\nVolumes for validation: {VALV1}")
+    print(f"\nVolumes for testing: {TESTV1}")
 
     train_dirs = []
     val_dirs = []
