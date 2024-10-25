@@ -17,6 +17,11 @@ from lightning.prediction_logging_callback import PredictionLoggingCallback
 from lightning.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
 
+########################################
+import logging
+logging.basicConfig(level=logging.DEBUG)
+########################################
+
 
 def main(args):
 
