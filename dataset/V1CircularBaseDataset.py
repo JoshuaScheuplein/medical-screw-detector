@@ -45,8 +45,7 @@ class V1CircularBaseDataset(Dataset):
                 projection = neglog_normalize(projection)
 
         projection_tensor = torch.from_numpy(projection)
-        print("Shape", projection_tensor.shape)
-        assert projection_tensor.shape == (400, 976, 976) # Additionally added
+        assert projection_tensor.shape == (976, 976) # Additionally added
 
         # load objects
         if self.pre_load_labels:
