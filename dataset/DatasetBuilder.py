@@ -113,9 +113,11 @@ def custom_collate_fn(batch):
 def build_dataset(image_set, args):
 
     if os.name == 'nt':
+        print("\nUsing 'local_dataset_split()' to build dataset ...")
         training_volumes, validation_volumes, testing_volumes = local_dataset_split()
         images_per_volume = 400
     else:
+        print("\nUsing 'cluster_dataset_split()' to build dataset ...")
         training_volumes, validation_volumes, testing_volumes = cluster_dataset_split()
         images_per_volume = 400
 
