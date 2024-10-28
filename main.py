@@ -129,9 +129,9 @@ def main(args):
 
     #####################################################################################################
 
-    print(f"\nNumber of Samples in 'Train' Dataloader: {len(data_loader_train)}")
-    print(f"Number of Samples in 'Val' Dataloader: {len(data_loader_val)}")
-    print(f"Number of Samples in 'Test' Dataloader: {len(data_loader_test)}")
+    print(f"\nNumber of Batches in 'Train' Dataloader: {len(data_loader_train)}")
+    print(f"Number of Batches in 'Val' Dataloader: {len(data_loader_val)}")
+    print(f"Number of Batches in 'Test' Dataloader: {len(data_loader_test)}")
 
     #########################
     # init callbacks
