@@ -2,7 +2,7 @@
 #SBATCH --job-name=DAX-Screw-Detection
 #SBATCH --output=logfile_output_%j.log
 #SBATCH --error=logfile_error_%j.log
-#SBATCH --time=0-23:30:00
+#SBATCH --time=0-5:30:00
 #SBATCH --gres=gpu:a100:1
 #SBATCH --partition=a100
 #SBATCH --mail-user=joshua.scheuplein.ext@siemens-healthineers.com
