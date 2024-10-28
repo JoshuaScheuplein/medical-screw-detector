@@ -68,6 +68,8 @@ echo -e "\nFinished data transfer at $(date)\n"
 cd "$FAST_DATA_DIR" || echo "Error: Failed to change into $FAST_DATA_DIR"
 du -ah -d 1
 
+ls
+
 # Display general disk usage
 shownicerquota.pl
 

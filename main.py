@@ -91,6 +91,10 @@ def main(args):
     data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
                                   collate_fn=custom_collate_fn, num_workers=args.num_workers, persistent_workers=True)
 
+    print(f"\nNumber of Samples in 'Train' Dataloader: {len(data_loader_train)}")
+    print(f"\nNumber of Samples in 'Val' Dataloader: {len(data_loader_val)}")
+    print(f"\nNumber of Samples in 'Test' Dataloader: {len(data_loader_test)}")
+
     #########################
     # init callbacks
     #########################
