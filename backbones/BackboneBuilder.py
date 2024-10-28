@@ -38,10 +38,10 @@ def get_backbone(args):
     elif args.backbone in ["sam2_base", "sam2_large"]:
         backbone = SAM2Backbone(args)
 
-    elif args.backbone in ["medical_resnet50"]:
+    elif args.backbone in ["medical_resnet18", "medical_resnet50"]:
         backbone = MedicalResNet(args)
 
-    elif args.backbone in ["medical_vit_s_8", "medical_vit_s_16"]:
+    elif args.backbone in ["medical_vit_t_8", "medical_vit_t_16", "medical_vit_s_8", "medical_vit_s_16"]:
         backbone = MedicalViT(args)
     else:
         raise ValueError(f"Invalid backbone type: {args.backbone}")
