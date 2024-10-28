@@ -106,7 +106,7 @@ class MedicalViT(BaseBackbone):
         self.backbone.eval()
         with torch.no_grad():
 
-            intermediate_outputs = self.backbone.get_intermediate_layers(x, n=self.n_layers)
+            intermediate_outputs = self.backbone.get_intermediate_layers(img_batch, n=self.n_layers)
             # intermediate_outputs.shape = n_layers * [B, num_patches + 1, embed_dim]
 
             extracted_features = [reshape_patches(output, self.patch_size) for output in intermediate_outputs]
