@@ -96,10 +96,10 @@ def main(args):
 
     #####################################################################################################
 
-    print("Batchsize:", args.batch_size)
+    print("\nBatchsize:", args.batch_size)
     print("Num Workers:", args.num_workers)
 
-    sampler_train = torch.utils.data.SequentialSampler(dataset_train) # Adapted Code
+    sampler_train = torch.utils.data.RandomSampler(dataset_train) # Adapted Code
     sampler_val = torch.utils.data.SequentialSampler(dataset_val)
     sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
