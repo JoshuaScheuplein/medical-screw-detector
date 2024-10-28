@@ -88,6 +88,9 @@ class MedicalViT(BaseBackbone):
         img_batch = torch.stack(transformed_images)
         img_batch = img_batch.to(self.args.device)
 
+        B, C, W, H = img_batch.shape
+        assert (C, W, H) == (3, 976, 976)
+
         def reshape_patches(x, patch_size):
 
             b, _, embed_dim = x.shape                           # [B, num_patches + 1, embed_dim]

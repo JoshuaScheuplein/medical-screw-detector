@@ -87,6 +87,9 @@ class MedicalResNet(BaseBackbone):
         img_batch = torch.stack(transformed_images)
         img_batch = img_batch.to(self.args.device)
 
+        B, C, W, H = img_batch.shape
+        assert (C, W, H) == (3, 976, 976)
+
         self.backbone.eval()
         extracted_features = []
         with torch.no_grad():
