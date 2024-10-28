@@ -23,7 +23,7 @@ from utils.custom_arg_parser import get_args_parser
 #############################################
 import logging
 # logging.basicConfig(level=logging.DEBUG)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(message)s')
 progress_logger = logging.getLogger(__name__)
 #############################################
 
@@ -38,9 +38,10 @@ class EpochLoggingCallback(Callback):
         self.batch_start_time = None
 
     def format_time(self, elapsed_seconds):
-        seconds = int(elapsed_seconds)
-        milliseconds = int((elapsed_seconds - seconds) * 1000)
-        return f"{seconds}.{milliseconds:03d}"
+        hours, remainder = divmod(int(elapsed_seconds), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        milliseconds = int((elapsed_seconds - int(elapsed_seconds)) * 1000)
+        return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:03}"
 
     # Training Epoch Timing
     def on_train_epoch_start(self, trainer, pl_module):
