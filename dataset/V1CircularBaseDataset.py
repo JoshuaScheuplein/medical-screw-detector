@@ -39,6 +39,7 @@ class V1CircularBaseDataset(Dataset):
         volume_path = os.path.join(self.data_dir, self.volume_names[volume_idx])
 
         projections_path = os.path.join(volume_path, "projections.tiff")
+        assert os.path.isfile(projections_path) # Additionally added
         # print("Projections path:", projections_path)
         with tifffile.TiffFile(projections_path) as projection_file:
             projection = projection_file.asarray(key=slice(view_idx, (view_idx + 1)))
@@ -54,6 +55,7 @@ class V1CircularBaseDataset(Dataset):
             p_pfw = self.label_P_pfw_map[self.volume_names[volume_idx]][view_idx]
         else:
             labels_path = os.path.join(volume_path, "labels.json")
+            assert os.path.isfile(labels_path) # Additionally added
             # print("Labels path:", labels_path)
             with open(labels_path) as labels_file:
                 labels = json.load(labels_file)

@@ -129,9 +129,9 @@ def main(args):
 
     #####################################################################################################
 
-    print(f"\nNumber of Batches in 'Train' Dataloader: {len(data_loader_train)}")
-    print(f"Number of Batches in 'Val' Dataloader: {len(data_loader_val)}")
-    print(f"Number of Batches in 'Test' Dataloader: {len(data_loader_test)}")
+    print(f"\nNumber of batches in 'Train' Dataloader: {len(data_loader_train)}")
+    print(f"Number of batches in 'Val' Dataloader: {len(data_loader_val)}")
+    print(f"Number of batches in 'Test' Dataloader: {len(data_loader_test)}")
 
     #########################
     # init callbacks
@@ -175,7 +175,7 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
-        print("Using SLURM environment ...\n")
+        print("Using SLURM environment plugin!\n")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
     trainer = Trainer(max_epochs=args.epochs,
@@ -185,7 +185,7 @@ def main(args):
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100, # How often to log within steps
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      # callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
+                      callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
                       plugins=plugins,
                       )
 
