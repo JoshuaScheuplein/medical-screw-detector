@@ -24,7 +24,8 @@ def cluster_dataset_split():
     #            'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07'] # Ankle04_2, Ankle04_3 and Foot01_3 missing ...
 
     " This training set should fix the bug "
-    TRAINV1 = ['Elbow02', 'Elbow03', 'Knee01', 'Knee02', 'Knee03', 'Knee04', 'Knee05', 'Knee06', 'Knee07',
+    TRAINV1 = ['Ankle01', 'Ankle02', 'Ankle03', 'Ankle05', 'Ankle06', 'Ankle07', 'Ankle08', 'Ankle09',
+               'Elbow02', 'Elbow03', 'Knee01', 'Knee02', 'Knee03', 'Knee04', 'Knee05', 'Knee06', 'Knee07',
                'Knee08', 'Knee09', 'Leg01', 'Spine01', 'Spine02', 'Spine03', 'Spine04', 'Spine05', 'Wrist01', 'Wrist02',
                'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07'] # Ankle04_2, Ankle04_3 and Foot01_3 missing ...
 
