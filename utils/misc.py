@@ -78,4 +78,3 @@ def sigmoid_focal_loss(inputs, targets, num_boxes, alpha: float = 0.25, gamma: f
     if idx is not None:
         return loss[idx].mean(1).sum() / num_boxes
     return loss.mean(1).sum() / num_boxes
-    
