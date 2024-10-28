@@ -74,13 +74,12 @@ def main(args):
     dataset_val = build_dataset(image_set='val', args=args)
     dataset_test = build_dataset(image_set='test', args=args)
 
-    # sampler_train = torch.utils.data.RandomSampler(dataset_train) # Original Code
-    sampler_train = torch.utils.data.SequentialSampler(dataset_train) # Adapted Code
-
-    sampler_val = torch.utils.data.SequentialSampler(dataset_val)
-    sampler_test = torch.utils.data.SequentialSampler(dataset_test)
-
     #####################################################################################################
+
+    # sampler_train = torch.utils.data.RandomSampler(dataset_train)
+    # sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    # sampler_test = torch.utils.data.SequentialSampler(dataset_test)
+
     # batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
 
     # data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
@@ -96,6 +95,10 @@ def main(args):
     #                               persistent_workers=True)
 
     #####################################################################################################
+
+    sampler_train = torch.utils.data.SequentialSampler(dataset_train) # Adapted Code
+    sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
     data_loader_train = DataLoader(dataset_train, args.batch_size, sampler=sampler_train, drop_last=False,
                                    collate_fn=custom_collate_fn, num_workers=5,

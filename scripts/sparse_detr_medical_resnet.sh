@@ -68,8 +68,6 @@ echo -e "\nFinished data transfer at $(date)\n"
 cd "$FAST_DATA_DIR" || echo "Error: Failed to change into $FAST_DATA_DIR"
 du -ah -d 1
 
-ls
-
 # Display general disk usage
 shownicerquota.pl
 
@@ -83,7 +81,7 @@ echo -e "\nTraining started at $(date)"
 
 srun python3 main.py \
   --job_ID "$SLURM_JOB_ID" \
-  --data_dir "$TMPDIR/2024-04-Scheuplein-Screw-Detection" \
+  --data_dir "$FAST_DATA_DIR/2024-04-Scheuplein-Screw-Detection" \
   --result_dir "$RESULTS_DIR" \
   --backbone "medical_resnet50" \
   --backbone_checkpoint_file "$CHECKPOINT" \
