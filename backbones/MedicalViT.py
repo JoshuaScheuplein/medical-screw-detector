@@ -5,7 +5,9 @@ import math
 import numpy as np
 
 import torch
-from torch import Tensor
+import torchvision.transforms as T
+from torch import Tensor, nn
+from torchvision import models
 
 import backbones.vision_transformer as vits
 from backbones.BaseBackbone import BaseBackbone
