@@ -38,10 +38,11 @@ for sample in data_dir.iterdir():
 
     labels_path = data_dir / Path(sample) / Path("labels.json")
     if labels_path.is_file():
-        labels = json.load(labels_path)
-        labels = labels["landmarks2d"]
-        print(f"Found labels file with {len(labels.keys())} views ...")
-        valid_samples.append(str(sample).split("/")[-1])
+        with open(labels_path, 'r') as file:
+            labels = json.load(file)
+            labels = labels["landmarks2d"]
+            print(f"Found labels file with {len(labels.keys())} views ...")
+            valid_samples.append(str(sample).split("/")[-1])
     else:
         print(f"ERROR: Could not find labels file!")
         invalid_samples.append(str(sample).split("/")[-1])
