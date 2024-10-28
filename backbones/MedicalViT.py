@@ -21,18 +21,19 @@ class MedicalViT(BaseBackbone):
         else:
             self.checkpoint_file = args.backbone_checkpoint_file
 
+        self.n_layers = 6
         self.patch_size = int(args.backbone.lower().split("_")[-1])
 
         if args.backbone.lower() == 'medical_vit_t_8' or args.backbone.lower() == 'medical_vit_t_16':
             self.model_type = "ViT-T"
             self.image_size = 976 
-            self.channels = [192, 192, 192, 192, 192, 192]
-            self.embedding_size = [61, 61, 61, 61, 61, 61]
+            self.channels = [192 for _ in range(self.n_layers)]
+            self.embedding_size = [61 for _ in range(self.n_layers)]
         elif args.backbone.lower() == 'medical_vit_s_8' or args.backbone.lower() == 'medical_vit_s_16':
             self.model_type = "ViT-S"
             self.image_size = 976 
-            self.channels = [384, 384, 384, 384, 384, 384]
-            self.embedding_size = [61, 61, 61, 61, 61, 61]
+            self.channels = [384 for _ in range(self.n_layers)]
+            self.embedding_size = [61 for _ in range(self.n_layers)]
         else:
             raise ValueError(f"MedicalViT '{args.backbone}' not supported.")
 
