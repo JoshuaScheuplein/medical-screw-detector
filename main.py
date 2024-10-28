@@ -120,7 +120,7 @@ def main(args):
         mode="min",
         dirpath=args.result_dir,
         filename="sample-val_loss-{epoch:02d}-{val_loss:.2f}",
-        save_last=True, # Originally set to 'False'
+        save_last=False,
     )
 
     for dataset in [dataset_train, dataset_val, dataset_test]:
@@ -150,8 +150,8 @@ def main(args):
                       num_nodes=1,
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100, # How often to log within steps
-                      callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      # callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
+                      # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
+                      callbacks=[checkpoint_train_callback, checkpoint_val_callback, prediction_logging_callback], # Adapted Code
                       plugins=plugins,
                       )
 
