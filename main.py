@@ -40,11 +40,11 @@ def main(args):
         job_name = job_name.replace(".pth", "")
 
         if args.use_enc_aux_loss:
-            wandb_run_identifier = f"Sparse_DETR_{args.backbone}_{job_name}_{args.job_ID}"
+            wandb_run_identifier = f"Sparse_DETR_{args.job_ID}_{args.backbone}_{job_name}"
         elif args.eff_query_init:
-            wandb_run_identifier = f"Efficient_DETR_{args.backbone}_{job_name}_{args.job_ID}"
+            wandb_run_identifier = f"Efficient_DETR_{args.job_ID}_{args.backbone}_{job_name}"
         else:
-            wandb_run_identifier = f"Deformable_DETR_{args.backbone}_{job_name}_{args.job_ID}"
+            wandb_run_identifier = f"Deformable_DETR_{args.job_ID}_{args.backbone}_{job_name}"
 
         # logger = WandbLogger(project="Deformable DETR for dense image recognition",
         #                      name=wandb_run_identifier,
