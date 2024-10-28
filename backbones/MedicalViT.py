@@ -27,11 +27,13 @@ class MedicalViT(BaseBackbone):
         if args.backbone.lower() == 'medical_vit_t_8' or args.backbone.lower() == 'medical_vit_t_16':
             self.model_type = "ViT-T"
             self.image_size = 976 
+            self.embed_dim = 192
             self.channels = [192 for _ in range(self.n_layers)]
             self.embedding_size = [61 for _ in range(self.n_layers)]
         elif args.backbone.lower() == 'medical_vit_s_8' or args.backbone.lower() == 'medical_vit_s_16':
             self.model_type = "ViT-S"
-            self.image_size = 976 
+            self.image_size = 976
+            self.embed_dim = 384
             self.channels = [384 for _ in range(self.n_layers)]
             self.embedding_size = [61 for _ in range(self.n_layers)]
         else:
