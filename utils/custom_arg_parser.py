@@ -1,10 +1,10 @@
 import argparse
-
 import numpy as np
 import torch
 
 
 class DefaultArgs:
+
     lr=0.0002
     lr_backbone_names=["backbone.0"]
     lr_backbone=0.00002
@@ -77,8 +77,10 @@ class DefaultArgs:
 
     # * checkpointing
     result_dir = r"E:\MA_Data\results"
+    
 
 def get_args_parser():
+
     parser = argparse.ArgumentParser('Deformable DETR Detector for Implants', add_help=False)
     parser.add_argument('--lr', default=DefaultArgs.lr, type=float)
     parser.add_argument('--lr_backbone_names', default=DefaultArgs.lr_backbone_names, type=str, nargs='+')
