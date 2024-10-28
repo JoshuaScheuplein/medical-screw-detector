@@ -64,7 +64,7 @@ class EpochLoggingCallback(Callback):
     # Validation Epoch Timing
     def on_validation_epoch_start(self, trainer, pl_module):
         self.val_epoch_start_time = time.time()
-        progress_logger.info(f"\nStarting validation epoch {trainer.current_epoch + 1}...")
+        progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1}...")
 
     def on_validation_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.val_epoch_start_time
