@@ -10,19 +10,40 @@ Found 169 valid samples: ['Wrist04_1', 'Ankle05_2', 'Knee05_2', 'Wrist11_1', 'Le
 Found 5 invalid samples: ['Foot01_3', 'Ankle04_2', 'Ankle20_3', 'Ankle04_3', 'Elbow04_3']
 """
 
+# data_dir = Path("/home/vault/iwi5/iwi5165h/TestDir/2024-04-Scheuplein-Screw-Detection")
+
+# valid_samples, invalid_samples = [], []
+# for sample in data_dir.iterdir():
+#     print(f"\nInspecting sample '{str(sample)}'")
+
+#     projections_path = data_dir / Path(sample) / Path("projections.tiff")
+#     if projections_path.is_file():
+#         projections = tifffile.imread(projections_path)
+#         print(f"Found projections file with shape: {projections.shape}")
+#         valid_samples.append(str(sample).split("/")[-1])
+#     else:
+#         print(f"ERROR: Could not find projections file!")
+#         invalid_samples.append(str(sample).split("/")[-1])
+
+# print(f"\nFound {len(valid_samples)} valid samples:", valid_samples)
+# print(f"\nFound {len(invalid_samples)} invalid samples:", invalid_samples)
+
+
+
 data_dir = Path("/home/vault/iwi5/iwi5165h/TestDir/2024-04-Scheuplein-Screw-Detection")
 
 valid_samples, invalid_samples = [], []
 for sample in data_dir.iterdir():
     print(f"\nInspecting sample '{str(sample)}'")
 
-    projections_path = data_dir / Path(sample) / Path("projections.tiff")
-    if projections_path.is_file():
-        projections = tifffile.imread(projections_path)
-        print(f"Found projections file with shape: {projections.shape}")
+    labels_path = data_dir / Path(sample) / Path("labels.json")
+    if labels_path.is_file():
+        labels = json.load(labels_path)
+        labels = labels["landmarks2d"]
+        print(f"Found labels file with {len(labels.keys())} views ...")
         valid_samples.append(str(sample).split("/")[-1])
     else:
-        print(f"ERROR: Could not find projections file!")
+        print(f"ERROR: Could not find labels file!")
         invalid_samples.append(str(sample).split("/")[-1])
 
 print(f"\nFound {len(valid_samples)} valid samples:", valid_samples)
