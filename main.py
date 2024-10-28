@@ -190,10 +190,6 @@ def main(args):
                       enable_model_summary=True, # Enable detailed model summary (Additionally added)
                       )
 
-    print(f"\nTrain Batches: {trainer.num_training_batches}")
-    print(f"\nTrain Batches: {trainer.num_val_batches}")
-    print(f"\nTrain Batches: {trainer.num_test_batches}")
-
     last_ckpt_file = args.result_dir + "/last.ckpt"
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
         args.checkpoint_file = last_ckpt_file
