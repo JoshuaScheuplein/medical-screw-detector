@@ -21,9 +21,8 @@ from lightning.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
 
 #############################################
-# import logging
+import logging
 # logging.basicConfig(level=logging.DEBUG)
-
 logging.basicConfig(level=logging.INFO)
 progress_logger = logging.getLogger(__name__)
 #############################################
