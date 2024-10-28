@@ -212,7 +212,7 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
-        print("Using SLURM environment plugin!\n")
+        print("Using SLURM environment plugin!")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
     trainer = Trainer(max_epochs=args.epochs,
@@ -224,7 +224,7 @@ def main(args):
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       callbacks=[checkpoint_train_callback, checkpoint_val_callback,
                                  prediction_logging_callback, epoch_logging_callback], # Adapted Code
-                      enable_progress_bar=False, # Additionally added
+                      enable_progress_bar=True, # Additionally added
                       plugins=plugins,
                       )
 
