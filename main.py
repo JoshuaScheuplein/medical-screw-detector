@@ -18,8 +18,8 @@ from lightning.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
 
 ########################################
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+import logging
+logging.basicConfig(level=logging.INFO)
 ########################################
 
 

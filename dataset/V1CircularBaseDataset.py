@@ -39,7 +39,7 @@ class V1CircularBaseDataset(Dataset):
         volume_path = os.path.join(self.data_dir, self.volume_names[volume_idx])
 
         projections_path = os.path.join(volume_path, "projections.tiff")
-        print("Projections path:", projections_path)
+        # print("Projections path:", projections_path)
         with tifffile.TiffFile(projections_path) as projection_file:
             projection = projection_file.asarray(key=slice(view_idx, (view_idx + 1)))
             if neglog_normalize:
@@ -54,9 +54,7 @@ class V1CircularBaseDataset(Dataset):
             p_pfw = self.label_P_pfw_map[self.volume_names[volume_idx]][view_idx]
         else:
             labels_path = os.path.join(volume_path, "labels.json")
-
-            print("Labels path:", labels_path)
-
+            # print("Labels path:", labels_path)
             with open(labels_path) as labels_file:
                 labels = json.load(labels_file)
                 objects, p_pfw = generate_labels(labels, view_idx)
