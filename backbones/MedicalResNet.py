@@ -14,19 +14,23 @@ from backbones.BaseBackbone import BaseBackbone
 class MedicalResNet(BaseBackbone):
     def __init__(self, args):
 
-        if args.backbone.lower() == 'medical_resnet50':
+        if os.name == 'nt':
+            self.checkpoint_file = args.backbone_checkpoint_file
+        else:
+            self.checkpoint_file = args.backbone_checkpoint_file
 
-            if os.name == 'nt':
-                self.checkpoint_file = args.backbone_checkpoint_file
-            else:
-                self.checkpoint_file = args.backbone_checkpoint_file
-
+        if args.backbone.lower() == 'medical_resnet18':
+            self.image_size = 976 
+            self.channels = [64, 128, 256, 512]
+            self.embedding_size = [244, 122, 61, 31]
+        elif args.backbone.lower() == 'medical_resnet50':
             self.image_size = 976 
             self.channels = [256, 512, 1024, 2048]
             self.embedding_size = [244, 122, 61, 31]
-
         else:
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
+
+        self.model_type = args.backbone.lower().replace("medical_", "")
 
         super().__init__(num_channels=self.channels, image_size=self.image_size, embedding_size=self.embedding_size, args=args)
 
@@ -37,21 +41,20 @@ class MedicalResNet(BaseBackbone):
         # Discard all weights and parameters belonging to DINOHead() ...
         teacher_dict = {k.replace('module.backbone.', ''): v for k, v in teacher_checkpoint.items() if k.startswith('module.backbone.')}
 
-        resnet50 = models.resnet50(weights=None)
-        resnet50.fc = nn.Identity() # Needed to successfully load checkpoint
-        msg = resnet50.load_state_dict(teacher_dict, strict=True)
+        assert self.model_type in models.__dict__.keys()
+        resnet = models.__dict__[self.model_type](weights=None)
+        resnet.fc = nn.Identity() # Needed to successfully load checkpoint
+        msg = resnet.load_state_dict(teacher_dict, strict=True)
         print(f"\nPretrained weights found at '{self.checkpoint_file}'\nand loaded with msg: {msg}")
-        resnet50 = nn.Sequential(*list(resnet50.children())[:-1]) # Discard the last FC layer (only needed for class predictions)
+        resnet = nn.Sequential(*list(resnet.children())[:-1]) # Discard the last FC layer (only needed for class predictions)
 
-        resnet50.eval() # Activate evaluation mode
-        self.backbone = resnet50
-
+        resnet.eval() # Activate evaluation mode
+        self.backbone = resnet
         for param in self.backbone.parameters():
             param.requires_grad = False
-            
         self.backbone = self.backbone.cuda()
 
-        print("\nSuccessfuly instantiated 'medical_resnet50' model (with .eval() mode and requires_grad=False)\n")
+        print(f"\nSuccessfuly instantiated 'medical_{self.model_type}' model (with .eval() mode and requires_grad=False)\n")
 
     '''
     Input image batch of shape (B, C, H, W) 
