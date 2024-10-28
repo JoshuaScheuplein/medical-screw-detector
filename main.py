@@ -36,7 +36,9 @@ class EpochLoggingCallback(Callback):
         self.batch_start_time = None
 
     def format_time(self, elapsed_seconds):
-        return str(timedelta(seconds=int(elapsed_seconds)))
+        seconds = int(elapsed_seconds)
+        milliseconds = int((elapsed_seconds - seconds) * 1000)
+        return f"{seconds}.{milliseconds:03d}"
 
     # Training Epoch Timing
     def on_train_epoch_start(self, trainer, pl_module):
@@ -224,7 +226,7 @@ def main(args):
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       callbacks=[checkpoint_train_callback, checkpoint_val_callback,
                                  prediction_logging_callback, epoch_logging_callback], # Adapted Code
-                      enable_progress_bar=True, # Additionally added
+                      enable_progress_bar=False, # Additionally added
                       plugins=plugins,
                       )
 
