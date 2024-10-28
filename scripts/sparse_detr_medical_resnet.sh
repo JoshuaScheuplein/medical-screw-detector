@@ -90,7 +90,7 @@ srun python3 main.py \
   --lr 0.00004 \
   --lr_drop_epochs 40 \
   --lr_backbone 0.000004 \
-  --batch_size 3 \
+  --batch_size 2 \            # Default: 3
   --epochs 50 \
   --with_box_refine \
   --two_stage \
