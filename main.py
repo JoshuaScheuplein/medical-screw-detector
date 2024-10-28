@@ -175,7 +175,7 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
-        print("\nUsing SLURM environment ...")
+        print("Using SLURM environment ...\n")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
     trainer = Trainer(max_epochs=args.epochs,
