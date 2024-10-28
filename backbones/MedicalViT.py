@@ -57,7 +57,12 @@ class MedicalViT(BaseBackbone):
         
         vit_model.eval() # Activate evaluation mode
         self.backbone = vit_model
+        for param in self.backbone.parameters():
+            param.requires_grad = False
         self.backbone = self.backbone.cuda()
+
+        print(f"\nSuccessfuly instantiated 'medical_{self.model_type.lower()}_{self.patch_size}' model (with .eval() mode and requires_grad=False)\n")
+
 
     '''
         Input image batch of shape (B, C, H, W) 
