@@ -18,8 +18,8 @@ from lightning.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
 
 ########################################
-# import logging
-# logging.basicConfig(level=logging.DEBUG)
+import logging
+logging.basicConfig(level=logging.DEBUG)
 ########################################
 
 
@@ -175,6 +175,7 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
+        print("\nUsing SLURM environment ...")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
     trainer = Trainer(max_epochs=args.epochs,
@@ -182,10 +183,11 @@ def main(args):
                       devices=1,
                       num_nodes=1,
                       default_root_dir=args.result_dir,
-                      log_every_n_steps=100, # How often to log within steps
+                      # log_every_n_steps=100, # How often to log within steps
+                      log_every_n_steps=1, # How often to log within steps
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       # callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
-                      plugins=plugins,
+                      # plugins=plugins,
                       enable_model_summary=True, # Enable detailed model summary (Additionally added)
                       )
 
