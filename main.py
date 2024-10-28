@@ -18,8 +18,8 @@ from lightning.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
 
 ########################################
-import logging
-logging.basicConfig(level=logging.INFO)
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
 ########################################
 
 
@@ -78,18 +78,25 @@ def main(args):
     sampler_val = torch.utils.data.SequentialSampler(dataset_val)
     sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
-    batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
+    #####################################################################################################
+    # batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
 
-    data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
+    # data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
+    #                                collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                                pin_memory=False, persistent_workers=True)
+
+    data_loader_train = DataLoader(dataset_train, args.batch_size, sampler=sampler_train, drop_last=False,
                                    collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                    pin_memory=False, persistent_workers=True)
+    #####################################################################################################
 
-    data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val,
-                                 drop_last=False, collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val, drop_last=False,
+                                 collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                  pin_memory=False, persistent_workers=True)
 
     data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
-                                  collate_fn=custom_collate_fn, num_workers=args.num_workers, persistent_workers=True)
+                                  collate_fn=custom_collate_fn, num_workers=args.num_workers,
+                                  persistent_workers=True)
 
     print(f"\nNumber of Samples in 'Train' Dataloader: {len(data_loader_train)}")
     print(f"\nNumber of Samples in 'Val' Dataloader: {len(data_loader_val)}")
