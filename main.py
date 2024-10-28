@@ -3,12 +3,14 @@ import os
 import signal
 import torch
 import wandb
+import time # Additionally added
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.plugins.environments import SLURMEnvironment
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning import Callback # Additionall added
 
 from torch.utils.data import DataLoader
 
@@ -21,6 +23,73 @@ from utils.custom_arg_parser import get_args_parser
 # import logging
 # logging.basicConfig(level=logging.DEBUG)
 ########################################
+
+# Additionall added
+class EpochLoggingCallback(Callback):
+
+    def __init__(self):
+        super().__init__()
+        self.train_epoch_start_time = None
+        self.val_epoch_start_time = None
+        self.test_epoch_start_time = None
+        self.batch_start_time = None
+
+    def format_time(self, elapsed_seconds):
+        return str(timedelta(seconds=int(elapsed_seconds)))
+
+    # Training Epoch Timing
+    def on_train_epoch_start(self, trainer, pl_module):
+        self.train_epoch_start_time = time.time()
+        print(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
+
+    def on_train_epoch_end(self, trainer, pl_module):
+        elapsed_time = time.time() - self.train_epoch_start_time
+        readable_time = self.format_time(elapsed_time)
+        print(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
+
+    # Training Batch Timing
+    def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+        self.batch_start_time = time.time()
+
+    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        batch_elapsed = time.time() - self.batch_start_time
+        print(f"Training batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
+
+    # Validation Epoch Timing
+    def on_validation_epoch_start(self, trainer, pl_module):
+        self.val_epoch_start_time = time.time()
+        print(f"\nStarting validation epoch {trainer.current_epoch + 1}...")
+
+    def on_validation_epoch_end(self, trainer, pl_module):
+        elapsed_time = time.time() - self.val_epoch_start_time
+        readable_time = self.format_time(elapsed_time)
+        print(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
+
+    # Validation Batch Timing
+    def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx, dataloader_idx):
+        self.batch_start_time = time.time()
+
+    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+        batch_elapsed = time.time() - self.batch_start_time
+        print(f"Validation batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
+
+    # Test Epoch Timing
+    def on_test_epoch_start(self, trainer, pl_module):
+        self.test_epoch_start_time = time.time()
+        print("\nStarting test epoch...")
+
+    def on_test_epoch_end(self, trainer, pl_module):
+        elapsed_time = time.time() - self.test_epoch_start_time
+        readable_time = self.format_time(elapsed_time)
+        print(f"Test epoch completed in {readable_time}")
+
+    # Test Batch Timing
+    def on_test_batch_start(self, trainer, pl_module, batch, batch_idx, dataloader_idx):
+        self.batch_start_time = time.time()
+
+    def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx):
+        batch_elapsed = time.time() - self.batch_start_time
+        print(f"Test batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
 
 def main(args):
@@ -131,6 +200,7 @@ def main(args):
             os.makedirs(prediction_path, exist_ok=True)
 
     prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
+    epoch_logging_callback = EpochLoggingCallback() # Additionally added
 
     #########################
     # Train the Model
@@ -149,9 +219,11 @@ def main(args):
                       devices=1,
                       num_nodes=1,
                       default_root_dir=args.result_dir,
-                      log_every_n_steps=100, # How often to log within steps
+                      log_every_n_steps=100,
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      callbacks=[checkpoint_train_callback, checkpoint_val_callback, prediction_logging_callback], # Adapted Code
+                      callbacks=[checkpoint_train_callback, checkpoint_val_callback,
+                                 prediction_logging_callback, epoch_logging_callback], # Adapted Code
+                      enable_progress_bar=False, # Additionally added
                       plugins=plugins,
                       )
 
