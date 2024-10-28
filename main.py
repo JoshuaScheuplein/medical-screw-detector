@@ -99,21 +99,33 @@ def main(args):
     print("\nBatchsize:", args.batch_size)
     print("Num Workers:", args.num_workers)
 
-    sampler_train = torch.utils.data.RandomSampler(dataset_train) # Adapted Code
-    sampler_val = torch.utils.data.SequentialSampler(dataset_val)
-    sampler_test = torch.utils.data.SequentialSampler(dataset_test)
+    # sampler_train = torch.utils.data.RandomSampler(dataset_train)
+    # sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    # sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
-    data_loader_train = DataLoader(dataset_train, args.batch_size, sampler=sampler_train, drop_last=False,
+    # data_loader_train = DataLoader(dataset_train, args.batch_size, sampler=sampler_train, drop_last=False,
+    #                                collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                                pin_memory=False, persistent_workers=False)
+
+    # data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val, drop_last=False,
+    #                              collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                              pin_memory=False, persistent_workers=False)
+
+    # data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
+    #                               collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                               pin_memory=False, persistent_workers=False)
+
+    data_loader_train = DataLoader(dataset_train, args.batch_size, shuffle=True, drop_last=True,
                                    collate_fn=custom_collate_fn, num_workers=args.num_workers,
-                                   pin_memory=False, persistent_workers=False)
+                                   pin_memory=False, persistent_workers=True)
 
-    data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val, drop_last=False,
+    data_loader_val = DataLoader(dataset_val, args.batch_size, shuffle=False, drop_last=False,
                                  collate_fn=custom_collate_fn, num_workers=args.num_workers,
-                                 pin_memory=False, persistent_workers=False)
+                                 pin_memory=False, persistent_workers=True)
 
-    data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
+    data_loader_test = DataLoader(dataset_test, args.batch_size, shuffle=False, drop_last=False,
                                   collate_fn=custom_collate_fn, num_workers=args.num_workers,
-                                  pin_memory=False, persistent_workers=False)
+                                  pin_memory=False, persistent_workers=True)
 
     #####################################################################################################
 
