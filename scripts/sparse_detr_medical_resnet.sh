@@ -79,6 +79,7 @@ git log --oneline -n 1
 # Start model training
 echo -e "\nTraining started at $(date)"
 
+# Note: Dafault batch size = 3
 srun python3 main.py \
   --job_ID "$SLURM_JOB_ID" \
   --data_dir "$FAST_DATA_DIR/2024-04-Scheuplein-Screw-Detection" \
@@ -90,7 +91,7 @@ srun python3 main.py \
   --lr 0.00004 \
   --lr_drop_epochs 40 \
   --lr_backbone 0.000004 \
-  --batch_size 2 \            # Default: 3
+  --batch_size \
   --epochs 50 \
   --with_box_refine \
   --two_stage \

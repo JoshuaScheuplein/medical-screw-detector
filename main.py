@@ -130,8 +130,8 @@ def main(args):
     #####################################################################################################
 
     print(f"\nNumber of Samples in 'Train' Dataloader: {len(data_loader_train)}")
-    print(f"\nNumber of Samples in 'Val' Dataloader: {len(data_loader_val)}")
-    print(f"\nNumber of Samples in 'Test' Dataloader: {len(data_loader_test)}")
+    print(f"Number of Samples in 'Val' Dataloader: {len(data_loader_val)}")
+    print(f"Number of Samples in 'Test' Dataloader: {len(data_loader_test)}")
 
     #########################
     # init callbacks
@@ -186,8 +186,7 @@ def main(args):
                       log_every_n_steps=100, # How often to log within steps
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       # callbacks=[checkpoint_train_callback, prediction_logging_callback], # Adapted Code
-                      # plugins=plugins,
-                      enable_model_summary=True, # Enable detailed model summary (Additionally added)
+                      plugins=plugins,
                       )
 
     last_ckpt_file = args.result_dir + "/last.ckpt"
