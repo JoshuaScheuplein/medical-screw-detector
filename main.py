@@ -54,12 +54,12 @@ class EpochLoggingCallback(Callback):
         progress_logger.info(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Training Batch Timing
-    def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
-        self.batch_start_time = time.time()
+    # def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
+    #     self.batch_start_time = time.time()
 
-    def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
-        batch_elapsed = time.time() - self.batch_start_time
-        progress_logger.info(f"Training batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
+    # def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+    #     batch_elapsed = time.time() - self.batch_start_time
+    #     progress_logger.info(f"Training batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Validation Epoch Timing
     def on_validation_epoch_start(self, trainer, pl_module):
@@ -72,12 +72,12 @@ class EpochLoggingCallback(Callback):
         progress_logger.info(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Validation Batch Timing
-    def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx):
-        self.batch_start_time = time.time()
+    # def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx):
+    #     self.batch_start_time = time.time()
 
-    def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
-        batch_elapsed = time.time() - self.batch_start_time
-        progress_logger.info(f"Validation batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
+    # def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+    #     batch_elapsed = time.time() - self.batch_start_time
+    #     progress_logger.info(f"Validation batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Test Epoch Timing
     def on_test_epoch_start(self, trainer, pl_module):
@@ -90,12 +90,12 @@ class EpochLoggingCallback(Callback):
         progress_logger.info(f"Test epoch completed in {readable_time}")
 
     # Test Batch Timing
-    def on_test_batch_start(self, trainer, pl_module, batch, batch_idx):
-        self.batch_start_time = time.time()
+    # def on_test_batch_start(self, trainer, pl_module, batch, batch_idx):
+    #     self.batch_start_time = time.time()
 
-    def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
-        batch_elapsed = time.time() - self.batch_start_time
-        print(f"Test batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
+    # def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+    #     batch_elapsed = time.time() - self.batch_start_time
+    #     print(f"Test batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
 
 def main(args):
