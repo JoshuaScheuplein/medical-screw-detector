@@ -80,7 +80,7 @@ git log --oneline -n 1
 echo -e "\nTraining started at $(date)"
 
 srun python3 main.py \
-  --job_ID "Screw-Detection-ResNet-$SLURM_JOB_ID" \
+  --job_ID "$SLURM_JOB_ID" \
   --data_dir "$TMPDIR/2024-04-Scheuplein-Screw-Detection" \
   --result_dir "$RESULTS_DIR" \
   --backbone "medical_resnet" \

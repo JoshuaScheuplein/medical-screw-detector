@@ -34,17 +34,17 @@ def main(args):
         # wandb.login(key="fc47046192188490a1fcedc7a411218e15247c56")
         wandb.login(key="b8b1693523deba0245ee3284c25847b029261f90")
 
-        job_ID = args.backbone_checkpoint_file.split("/")[-1]
-        assert "DINO_Training_" in job_ID
-        job_ID = job_ID.split("DINO_Training_")[-1]
-        job_ID = job_ID.replace(".pth", "")
+        job_name = args.backbone_checkpoint_file.split("/")[-1]
+        assert "DINO_Training_" in job_name
+        job_name = job_name.split("DINO_Training_")[-1]
+        job_name = job_name.replace(".pth", "")
 
         if args.use_enc_aux_loss:
-            wandb_run_identifier = f"Sparse_DETR_{args.backbone}_{job_ID}"
+            wandb_run_identifier = f"Sparse_DETR_{args.backbone}_{job_name}_{args.job_ID}"
         elif args.eff_query_init:
-            wandb_run_identifier = f"Efficient_DETR_{args.backbone}_{job_ID}"
+            wandb_run_identifier = f"Efficient_DETR_{args.backbone}_{job_name}_{args.job_ID}"
         else:
-            wandb_run_identifier = f"Deformable_DETR_{args.backbone}_{job_ID}"
+            wandb_run_identifier = f"Deformable_DETR_{args.backbone}_{job_name}_{args.job_ID}"
 
         # logger = WandbLogger(project="Deformable DETR for dense image recognition",
         #                      name=wandb_run_identifier,
