@@ -24,7 +24,7 @@ def cluster_dataset_split():
     #            'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07'] # Ankle04_2, Ankle04_3 and Foot01_3 missing ...
 
     " This training set should fix the bug "
-    TRAINV1 = ['Ankle02', 'Ankle03', 'Ankle05', 'Ankle06', 'Ankle07', 'Ankle08', 'Ankle09',
+    TRAINV1 = ['Ankle01', 'Ankle03', 'Ankle05', 'Ankle06', 'Ankle07', 'Ankle08', 'Ankle09',
                'Ankle10', 'Ankle11', 'Ankle12', 'Ankle13', 'Ankle14', 'Ankle15', 'Ankle16', 'Ankle17', 'Elbow01',
                'Elbow02', 'Elbow03', 'Knee01', 'Knee02', 'Knee03', 'Knee04', 'Knee05', 'Knee06', 'Knee07',
                'Knee08', 'Knee09', 'Leg01', 'Spine01', 'Spine02', 'Spine03', 'Spine04', 'Spine05', 'Wrist01', 'Wrist02',
@@ -35,11 +35,6 @@ def cluster_dataset_split():
     
     # TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ]
     TESTV1 = ['Ankle18', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Ankle20_3 missing ...
-
-    ##########################################################################################################################
-    # Just for debugging ...
-    # TRAINV1 = VALV1
-    ##########################################################################################################################
 
     print(f"\nVolumes for training: {TRAINV1}")
     print(f"Volumes for validation: {VALV1}")
