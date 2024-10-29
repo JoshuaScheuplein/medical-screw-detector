@@ -100,7 +100,6 @@ srun python3 main.py \
   --rho 0.1 \
   --use_enc_aux_loss \
   --num_queries 300 \
-  --alpha_correspondence \
   --num_workers 10
 
 # save predictions to `HOME`
