@@ -185,6 +185,8 @@ def get_args_parser():
                         help='directory to store results like logs and checkpoints')
 
     # Additionally added
-    parser.add_argument('--job_ID', default="Test_Job", type=str, help='Unique job ID')                    
+    parser.add_argument('--job_ID', default="Test_Job", type=str, help='Unique job ID')
+    parser.add_argument('--num_gpus', default=1, type=int, help='Number of GPUs per node')
+    parser.add_argument('--num_nodes', default=1, type=int, help='Number of available nodes')                         
 
     return parser

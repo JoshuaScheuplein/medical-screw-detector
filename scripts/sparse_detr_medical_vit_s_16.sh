@@ -54,7 +54,7 @@ echo -e "\nPython reaches GPU: $(python -c 'import torch; print(torch.cuda.is_av
 # Copy bash script for reproducibility
 mkdir -p "$RESULTS_DIR"
 cd "$SRC_DIR/scripts" || echo "Error: Failed to change into $SRC_DIR/scripts"
-cp "$SRC_DIR/scripts/sparse_detr_medical_vit_s_16.sh" "$RESULTS_DIR/sparse_detr_medical_vit_s_16.$SLURM_JOB_ID.sh"
+cp "$SRC_DIR/scripts/sparse_detr_medical_vit_s_16.sh" "$RESULTS_DIR/sparse_detr_medical_vit_s_16_$SLURM_JOB_ID.sh"
 
 # Copy training data to faster drive
 mkdir -p "$FAST_DATA_DIR"
