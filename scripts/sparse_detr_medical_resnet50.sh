@@ -28,7 +28,7 @@ RESULTS_DIR="$HOME/Screw-Detection-Results/Job-$SLURM_JOB_ID"
 
 FAST_DATA_DIR="$TMPDIR/Job-$SLURM_JOB_ID"
 
-DATA_ARCHIVE="$HPCVAULT/2024-04-Scheuplein-Screw-Detection.tar.gz"
+DATA_ARCHIVE="$HPCVAULT/V1-1to3objects-400projections-circular.tar.gz"
 
 ##############   TRAINING   ###############
 
@@ -82,7 +82,7 @@ echo -e "\nTraining started at $(date)"
 # Note: Dafault batch size = 3
 srun python3 main.py \
   --job_ID "$SLURM_JOB_ID" \
-  --data_dir "$FAST_DATA_DIR/2024-04-Scheuplein-Screw-Detection" \
+  --data_dir "$FAST_DATA_DIR/V1-1to3objects-400projections-circular" \
   --result_dir "$RESULTS_DIR" \
   --backbone "medical_resnet50" \
   --backbone_checkpoint_file "$CHECKPOINT" \
