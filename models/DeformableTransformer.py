@@ -124,7 +124,8 @@ class DeformableTransformer(nn.Module):
                 output_proposals: torch.Size([2, 15060, 4])
                     - x, y, w, h
         """
-        N_, S_, C_ = memory.shape
+        N_, S_, C_ = memory.shape # [memory] corresponds to [src_flatten + lvl_pos_embed_flatten]
+        # N_, S_, C_ = [batch_size, num_patches, feature_dim]
         proposals = []
         _cur = 0
         for lvl, (H_, W_) in enumerate(spatial_shapes):
@@ -171,12 +172,12 @@ class DeformableTransformer(nn.Module):
             bs, c, h, w = src.shape
             spatial_shape = (h, w)
             spatial_shapes.append(spatial_shape)
-            src = src.flatten(2).transpose(1, 2)
+            src = src.flatten(2).transpose(1, 2) # [bs, c, h*w] -> [bs, h*w, c]
             pos_embed = pos_embed.flatten(2).transpose(1, 2)
             lvl_pos_embed = pos_embed + self.level_embed[lvl].view(1, 1, -1)
             lvl_pos_embed_flatten.append(lvl_pos_embed)
             src_flatten.append(src)
-        src_flatten = torch.cat(src_flatten, 1)
+        src_flatten = torch.cat(src_flatten, 1) # [bs, lvl*h*w, c]
         lvl_pos_embed_flatten = torch.cat(lvl_pos_embed_flatten, 1)
         spatial_shapes = torch.as_tensor(spatial_shapes, dtype=torch.long, device=src_flatten.device)
         level_start_index = torch.cat((spatial_shapes.new_zeros((1,)), spatial_shapes.prod(1).cumsum(0)[:-1]))

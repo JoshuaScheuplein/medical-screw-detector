@@ -4,8 +4,9 @@ from pathlib import Path
 import numpy as np
 
 import torch
-import torchvision.transforms as T
 from torch import Tensor, nn
+
+import torchvision.transforms as T
 from torchvision import models
 
 from backbones.BaseBackbone import BaseBackbone
@@ -23,10 +24,12 @@ class MedicalResNet(BaseBackbone):
             self.image_size = 976 
             self.channels = [64, 128, 256, 512]
             self.embedding_size = [244, 122, 61, 31]
+
         elif args.backbone.lower() == 'medical_resnet50':
             self.image_size = 976 
             self.channels = [256, 512, 1024, 2048]
             self.embedding_size = [244, 122, 61, 31]
+
         else:
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
 
@@ -54,7 +57,7 @@ class MedicalResNet(BaseBackbone):
             param.requires_grad = False
         self.backbone = self.backbone.cuda()
 
-        print(f"\nSuccessfuly instantiated 'medical_{self.model_type}' model (with .eval() mode and requires_grad=False)\n")
+        print(f"\nSuccessfully instantiated 'medical_{self.model_type}' model (with .eval() mode and requires_grad=False)\n")
 
     '''
     Input image batch of shape (B, C, H, W) 

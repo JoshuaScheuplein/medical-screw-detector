@@ -5,8 +5,9 @@ import math
 import numpy as np
 
 import torch
-import torchvision.transforms as T
 from torch import Tensor, nn
+
+import torchvision.transforms as T
 from torchvision import models
 
 import backbones.vision_transformer as vits
@@ -22,20 +23,21 @@ class MedicalViT(BaseBackbone):
             self.checkpoint_file = args.backbone_checkpoint_file
 
         self.n_layers = 6
+        self.image_size = 976
         self.patch_size = int(args.backbone.lower().split("_")[-1])
 
         if args.backbone.lower() == 'medical_vit_t_8' or args.backbone.lower() == 'medical_vit_t_16':
             self.model_type = "ViT-T"
-            self.image_size = 976 
             self.embed_dim = 192
             self.channels = [192 for _ in range(self.n_layers)]
             self.embedding_size = [61 for _ in range(self.n_layers)]
+
         elif args.backbone.lower() == 'medical_vit_s_8' or args.backbone.lower() == 'medical_vit_s_16':
             self.model_type = "ViT-S"
-            self.image_size = 976
             self.embed_dim = 384
             self.channels = [384 for _ in range(self.n_layers)]
             self.embedding_size = [61 for _ in range(self.n_layers)]
+
         else:
             raise ValueError(f"MedicalViT '{args.backbone}' not supported.")
 
@@ -61,7 +63,7 @@ class MedicalViT(BaseBackbone):
             param.requires_grad = False
         self.backbone = self.backbone.cuda()
 
-        print(f"\nSuccessfuly instantiated 'medical_{self.model_type.lower()}_{self.patch_size}' model (with .eval() mode and requires_grad=False)\n")
+        print(f"\nSuccessfully instantiated 'medical_{self.model_type.lower()}_{self.patch_size}' model (with .eval() mode and requires_grad=False)\n")
 
 
     '''

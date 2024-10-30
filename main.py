@@ -184,7 +184,7 @@ def main(args):
         monitor="train_loss",
         mode="min",
         dirpath=args.result_dir,
-        filename="sample-train_loss-{epoch:02d}-{train_loss:.2f}",
+        filename="checkpoint-train_loss-{epoch:02d}-{train_loss:.2f}",
         save_last=True # saves a last.ckpt copy whenever a checkpoint file gets saved
     )
 
@@ -192,9 +192,9 @@ def main(args):
     checkpoint_val_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="val_loss",
-        mode="min",
+        mode="min",.,-
         dirpath=args.result_dir,
-        filename="sample-val_loss-{epoch:02d}-{val_loss:.2f}",
+        filename="checkpoint-val_loss-{epoch:02d}-{val_loss:.2f}",
         save_last=False,
     )
 
@@ -235,6 +235,7 @@ def main(args):
 
     last_ckpt_file = args.result_dir + "/last.ckpt"
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
+        print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
 
     trainer.fit(model=detr_model,
