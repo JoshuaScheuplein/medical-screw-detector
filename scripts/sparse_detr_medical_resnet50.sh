@@ -28,7 +28,7 @@ RESULTS_DIR="$HOME/Screw-Detection-Results/Job-$SLURM_JOB_ID"
 
 FAST_DATA_DIR="$TMPDIR/Job-$SLURM_JOB_ID"
 
-DATA_ARCHIVE="$HPCVAULT/V1-1to3objects-400projections-circular.tar.gz"
+# DATA_ARCHIVE="$HPCVAULT/V1-1to3objects-400projections-circular.tar.gz"
 
 ##############   TRAINING   ###############
 
@@ -61,7 +61,12 @@ mkdir -p "$FAST_DATA_DIR"
 echo "Successfully created $FAST_DATA_DIR"
 
 echo -e "\nStarted data transfer at $(date)"
-tar -xf "$DATA_ARCHIVE" -C "$FAST_DATA_DIR"
+
+# tar -xf "$DATA_ARCHIVE" -C "$FAST_DATA_DIR"
+
+# copy data to `$TMPDIR`
+cd "$HPCVAULT" && rsync -aRP --relative --update --include="*/" --include='encodings.tiff' --include='projections.tiff' --include='labels.json' --exclude="*/**" ./V1-1to3objects-400projections-circular/ "$FAST_DATA_DIR"
+
 echo -e "\nFinished data transfer at $(date)\n"
 
 # Display disk usage of $FAST_DATA_DIR

@@ -1,3 +1,49 @@
+print("\nEntered 'main_azure.py' ...")
+
+def compile_kernels():
+
+    import os
+    import torch
+
+    # Check if distributed mode is initialized and get the rank
+    if torch.distributed.is_initialized():
+        rank = torch.distributed.get_rank()
+    else:
+        rank = 0 # Assume rank 0 if not distributed
+
+    # Only execute on GPU with rank 0
+    if rank == 0:
+        os.system("echo '\nExecuting <pwd> command:'")
+        os.system("pwd")
+
+        os.system("echo '\nExecuting <ls> command:'")
+        os.system("ls")
+
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Executing <setup.py>:'")
+        os.system("echo '#################################################################'")
+        os.system("python models/ops/setup.py build install")
+        os.system("echo '#################################################################'")
+
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Available packages in active environment:'")
+        os.system("echo '#################################################################'")
+        os.system("conda list")
+
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Running unit test script <test.py>:'")
+        os.system("echo '#################################################################'")
+        os.system("python models/ops/test.py")
+        os.system("echo '#################################################################'")
+
+    # Synchronize all GPUs to wait until rank 0 completes the above commands
+    if torch.distributed.is_initialized():
+        torch.distributed.barrier()
+
+compile_kernels()
+
+print("\nStarting to import necessary packages ...")
+
 import os
 import argparse
 import json # Additionally added
@@ -21,9 +67,11 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Callback # Additionall added
 
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
-from lightning.prediction_logging_callback import PredictionLoggingCallback
-from lightning.detr_model import DeformableDETRLightning
+from lightning_copy.prediction_logging_callback import PredictionLoggingCallback
+from lightning_copy.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
+
+print("\nSuccessfully imported all required packages!")
 
 ###############################################################
 # import logging
@@ -131,9 +179,9 @@ def main(args):
         try:
             api_key = os.environ["WANDB_API_KEY"]
             wandb.login(key=api_key)
-            print(f"\nSuccessfully logged in to W&B with API key '{api_key}'\n")
+            print(f"\nSuccessfully logged in to W&B with API key '{api_key}'")
         except Exception as e:
-            print(f"\nCould not login to W&B service: {e}\n")
+            print(f"\nCould not login to W&B service: {e}")
 
         if args.use_enc_aux_loss:
             wandb_run_identifier = f"Sparse_DETR_{args.job_ID}"
@@ -157,7 +205,7 @@ def main(args):
         # logger = CSVLogger("logs", name="local_log") # Original
         logger = CSVLogger(save_dir=args.result_dir, flush_logs_every_n_steps=1) # Adapted
 
-    run = Run.get_context() # Setup for Azure logging
+    run = Run.get_context() # Setup for Azure logging and job resuming
 
     #########################
     # init dataloader
@@ -196,23 +244,37 @@ def main(args):
     # init callbacks
     #########################
 
+    checkpoint_dir = os.path.join(args.result_dir, "Checkpoints")
+    # os.makedirs(checkpoint_dir, exist_ok=True)
+    Path(checkpoint_dir).mkdir(parents=False, exist_ok=True)
+
+    # Additionally added
+    checkpoint_last_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="epoch",
+        mode="max",
+        dirpath=checkpoint_dir,
+        filename="backup_checkpoint",
+        save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
+    )
+
     # saves top-K checkpoints based on "train_loss" metric
     checkpoint_train_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="train_loss",
         mode="min",
-        dirpath=args.result_dir,
-        filename="checkpoint-train_loss-{epoch:02d}-{train_loss:.2f}",
-        save_last=True # saves a last.ckpt copy whenever a checkpoint file gets saved
+        dirpath=checkpoint_dir,
+        filename="checkpoint-training-{epoch:02d}-{train_loss:.2f}",
+        save_last=False
     )
 
     # saves top-K checkpoints based on "val_loss" metric
     checkpoint_val_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="val_loss",
-        mode="min",.,-
-        dirpath=args.result_dir,
-        filename="checkpoint-val_loss-{epoch:02d}-{val_loss:.2f}",
+        mode="min",
+        dirpath=checkpoint_dir,
+        filename="checkpoint-validation-{epoch:02d}-{val_loss:.2f}",
         save_last=False,
     )
 
@@ -221,7 +283,8 @@ def main(args):
             prediction_path = os.path.join(args.result_dir,
                                            os.path.basename(os.path.normpath(dataset.data_dir)),
                                            volume_name)
-            os.makedirs(prediction_path, exist_ok=True)
+            # os.makedirs(prediction_path, exist_ok=True)
+            Path(prediction_path).mkdir(parents=False, exist_ok=True)
 
     prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
     epoch_logging_callback = EpochLoggingCallback() # Additionally added
@@ -247,16 +310,18 @@ def main(args):
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100,
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      callbacks=[checkpoint_train_callback, checkpoint_val_callback,
+                      callbacks=[checkpoint_last_callback, checkpoint_val_callback, checkpoint_train_callback,
                                  prediction_logging_callback, epoch_logging_callback], # Adapted Code
                       enable_progress_bar=False, # Additionally added
                       # plugins=plugins, # We do not need any plugins on Azure
                       )
 
-    last_ckpt_file = args.result_dir + "/last.ckpt"
+    last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+        print(f"\nResume training from checkpoint '{last_ckpt_file}'")
         args.checkpoint_file = last_ckpt_file
+    else:
+        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
@@ -279,36 +344,15 @@ if __name__ == '__main__':
     #########################
     # build CUDA kernels
     #########################
-
-    os.system("echo '\nExecuting <pwd> command:'")
-    os.system("pwd")
-
-    os.system("echo '\nExecuting <ls> command:'")
-    os.system("ls")
-
-    os.system("echo '\n#################################################################'")
-    os.system("echo 'Executing <setup.py>:'")
-    os.system("echo '#################################################################'")
-    os.system("python models/ops/setup.py build install") # Compilation of CUDA kernels
-    os.system("echo '#################################################################'")
-
-    os.system("echo '\n#################################################################'")
-    os.system("echo 'Available packages in active environment:'")
-    os.system("echo '#################################################################'")
-    os.system("conda list")
-
-    os.system("echo '\n#################################################################'")
-    os.system("echo 'Running unit test script <test.py>:'")
-    os.system("echo '#################################################################'")
-    os.system("python models/ops/test.py")
-    os.system("echo '#################################################################'")
-
+    print("\nEntered main method ...")
+    # compile_kernels()
+    
     #########################
     # create result_dir
     #########################
-
     try:
-        os.mkdir(args.result_dir)
+        # os.mkdir(args.result_dir)
+        Path(args.result_dir).mkdir(parents=False, exist_ok=False)
         print(f"\nResult directory '{args.result_dir}' created successfully.")
     except FileExistsError:
         print(f"\nResult directory '{args.result_dir}' already exists.")
@@ -318,5 +362,4 @@ if __name__ == '__main__':
     #########################
     # start model training
     #########################
-
     main(args)
