@@ -21,7 +21,8 @@ from torch import nn
 import torch.nn.functional as F
 from torch.nn.init import xavier_uniform_, constant_
 
-from ..functions import MSDeformAttnFunction
+from ..functions import MSDeformAttnFunction # Original code
+# from models.ops.functions.ms_deform_attn_func import MSDeformAttnFunction # Additionally added
 
 
 def _is_power_of_2(n):

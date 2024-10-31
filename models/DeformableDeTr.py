@@ -14,16 +14,18 @@
 """
 Deformable DETR model and criterion classes.
 """
+import math
+import copy
+
 import numpy as np
+
 import torch
 from torch import nn
-import math
 
-from .DeformableTransformer import build_deforamble_transformer
 from .MLP import MLP
 from .Matcher import build_matcher
 from .SetCriterion import SetCriterion
-import copy
+from .DeformableTransformer import build_deforamble_transformer
 
 from backbones.BackboneBuilder import build_backbone
 from dataset.Objects import ScrewEnum

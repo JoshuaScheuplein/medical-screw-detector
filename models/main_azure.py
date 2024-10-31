@@ -1,8 +1,16 @@
+# from __future__ import absolute_import # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
+# from __future__ import print_function # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
+# from __future__ import division # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
+
+# /azureml-envs/azureml_11b082f67ffcaf3a350f2a66b0190a94/lib/python3.9/site-packages/MultiScaleDeformableAttention-1.0-py3.9-linux-x86_64.egg
+# /azureml-envs/azureml_11b082f67ffcaf3a350f2a66b0190a94/lib/python3.9/site-packages
+
 print("\nEntered 'main_azure.py' ...")
 
 def compile_kernels():
 
     import os
+    import sys
     import torch
 
     # Check if distributed mode is initialized and get the rank
@@ -13,17 +21,54 @@ def compile_kernels():
 
     # Only execute on GPU with rank 0
     if rank == 0:
+        
+        print("PYTHONPATH Old:", sys.path)
+
         os.system("echo '\nExecuting <pwd> command:'")
         os.system("pwd")
+
+        os.system("echo '\n#################################################################'")
 
         os.system("echo '\nExecuting <ls> command:'")
         os.system("ls")
 
+        os.system("echo '\nExecuting <ls models/ops> command:'")
+        os.system("ls models/ops")
+
+        os.system("echo '\nExecuting <ls models/ops/functions> command:'")
+        os.system("ls models/ops/functions")
+
+        os.system("echo '\nExecuting <ls models/ops/modules> command:'")
+        os.system("ls models/ops/modules")
+
         os.system("echo '\n#################################################################'")
         os.system("echo 'Executing <setup.py>:'")
         os.system("echo '#################################################################'")
-        os.system("python models/ops/setup.py build install")
+
+        # os.system("python models/ops/setup.py build install")
+
+        # Convert line endings in make.sh to Unix format
+        # prefix "b" indicates binary mode
+        with open("models/ops/make.sh", "rb") as f:
+            content = f.read()
+        with open("models/ops/make.sh", "wb") as f:
+            f.write(content.replace(b"\r\n", b"\n"))
+
+        os.system("cd ./models/ops && chmod +x make.sh && ./make.sh")
+
         os.system("echo '#################################################################'")
+
+        os.system("echo '\nExecuting <ls> command:'")
+        os.system("ls")
+
+        os.system("echo '\nExecuting <ls models/ops> command:'")
+        os.system("ls models/ops")
+
+        os.system("echo '\nExecuting <ls models/ops/functions> command:'")
+        os.system("ls models/ops/functions")
+
+        os.system("echo '\nExecuting <ls models/ops/modules> command:'")
+        os.system("ls models/ops/modules")
 
         os.system("echo '\n#################################################################'")
         os.system("echo 'Available packages in active environment:'")
@@ -36,11 +81,44 @@ def compile_kernels():
         os.system("python models/ops/test.py")
         os.system("echo '#################################################################'")
 
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Test 1 for import of package <MultiScaleDeformableAttention>:'")
+        os.system("echo '#################################################################'")
+        os.system("python models/ops/functions/test_import_1.py")
+        os.system("echo '#################################################################'")
+
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Test 2 for import of package <MultiScaleDeformableAttention>:'")
+        os.system("echo '#################################################################'")
+        os.system("python models/ops/test_import_2.py")
+        os.system("echo '#################################################################'")
+
+        os.system("echo '\n#################################################################'")
+        os.system("echo 'Test 3 for import of package <MultiScaleDeformableAttention>:'")
+        os.system("echo '#################################################################'")
+        os.system("python models/test_import_3.py")
+        os.system("echo '#################################################################'")
+
+        os.system("echo '\n#################################################################'")
+        os.system("pip show MultiScaleDeformableAttention")
+        os.system("echo '#################################################################'")
+
+        ######################################################################################
+        import os
+        import sys
+        # path = os.path.join(os.path.dirname(__file__), "models")
+        path = os.path.dirname(os.path.dirname(__file__))
+        print("Adding path to PYTHONPATH:", path)
+        sys.path.append(path) # Adds the current directory tp $PYTHONPATH
+        ######################################################################################
+
+        print("PYTHONPATH New:", sys.path)
+
     # Synchronize all GPUs to wait until rank 0 completes the above commands
     if torch.distributed.is_initialized():
         torch.distributed.barrier()
 
-compile_kernels()
+# compile_kernels()
 
 print("\nStarting to import necessary packages ...")
 
@@ -57,6 +135,7 @@ import time # Additionally added
 from datetime import timedelta # Additionally added
 
 import torch
+import torchvision # Additionally added to solve import issue ...
 from torch.utils.data import DataLoader
 
 from pytorch_lightning import Trainer
@@ -66,10 +145,29 @@ from pytorch_lightning.plugins.environments import SLURMEnvironment
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Callback # Additionall added
 
+#######################################################################################
+try:
+    import MultiScaleDeformableAttention as MSDA
+    print("Success")
+    print("'MultiScaleDeformableAttention' is located at:", MSDA.__file__)
+except Exception as e:
+    print("Failed to import 'MultiScaleDeformableAttention' in main_azure.py")
+    print(e)
+#######################################################################################
+
+# Original code
+import sys
+print("PYTHONPATH in main_azure.py:", sys.path)
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
 from lightning_copy.prediction_logging_callback import PredictionLoggingCallback
 from lightning_copy.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
+
+# Adapted code
+# from ..dataset.DatasetBuilder import build_dataset, custom_collate_fn
+# from ..lightning_copy.prediction_logging_callback import PredictionLoggingCallback
+# from ..lightning_copy.detr_model import DeformableDETRLightning
+# from ..utils.custom_arg_parser import get_args_parser
 
 print("\nSuccessfully imported all required packages!")
 

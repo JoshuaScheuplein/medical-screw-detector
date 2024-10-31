@@ -10,7 +10,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 # ------------------------------------------------------------------------------------
 
-
 import copy
 import math
 
@@ -19,9 +18,9 @@ import torch.nn.functional as F
 from torch import nn
 from torch.nn.init import xavier_uniform_, constant_, normal_
 
-from models.ops.modules.ms_alpha_cross_attn import MSAlphaCrossAttn
 from utils.misc import inverse_sigmoid
 from models.ops.modules import MSDeformAttn
+from models.ops.modules.ms_alpha_cross_attn import MSAlphaCrossAttn
 
 
 class DeformableTransformer(nn.Module):

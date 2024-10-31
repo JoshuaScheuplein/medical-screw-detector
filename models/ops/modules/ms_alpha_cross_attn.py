@@ -23,7 +23,10 @@ import torch.nn.functional as F
 from torch.nn.init import xavier_uniform_, constant_
 
 from dataset.transforms import apply_transformation_matrix_batched, reverse_transformation_matrix_batched
-from models.ops.functions import MSDeformAttnFunction
+
+from models.ops.functions import MSDeformAttnFunction # Original Code
+# from models.ops.functions.ms_deform_attn_func import MSDeformAttnFunction # Adapted Code
+
 from utils.alpha_correspondance import project_to_second_view_fixed, project_to_second_view
 
 
