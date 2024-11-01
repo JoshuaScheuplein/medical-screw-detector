@@ -172,10 +172,10 @@ from utils.custom_arg_parser import get_args_parser
 print("\nSuccessfully imported all required packages!")
 
 ###############################################################
-# import logging
+import logging
 # logging.basicConfig(level=logging.DEBUG)
-# logging.basicConfig(level=logging.INFO, format='%(message)s')
-# progress_logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(message)s')
+progress_logger = logging.getLogger(__name__)
 ###############################################################
 
 # Additionally added
@@ -197,14 +197,14 @@ class EpochLoggingCallback(Callback):
     # Training Epoch Timing
     def on_train_epoch_start(self, trainer, pl_module):
         self.train_epoch_start_time = time.time()
-        # progress_logger.info(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
-        print(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
+        progress_logger.info(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
+        # print(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
 
     def on_train_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.train_epoch_start_time
         readable_time = self.format_time(elapsed_time)
-        # progress_logger.info(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
-        print(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
+        progress_logger.info(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
+        # print(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Training Batch Timing
     # def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
@@ -217,14 +217,14 @@ class EpochLoggingCallback(Callback):
     # Validation Epoch Timing
     def on_validation_epoch_start(self, trainer, pl_module):
         self.val_epoch_start_time = time.time()
-        # progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1}...")
-        print(f"Starting validation epoch {trainer.current_epoch + 1}...")
+        progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1}...")
+        # print(f"Starting validation epoch {trainer.current_epoch + 1}...")
 
     def on_validation_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.val_epoch_start_time
         readable_time = self.format_time(elapsed_time)
-        # progress_logger.info(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
-        print(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
+        progress_logger.info(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
+        # print(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Validation Batch Timing
     # def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx):
@@ -237,14 +237,14 @@ class EpochLoggingCallback(Callback):
     # Test Epoch Timing
     def on_test_epoch_start(self, trainer, pl_module):
         self.test_epoch_start_time = time.time()
-        # progress_logger.info("\nStarting test epoch...")
-        print("\nStarting test epoch...")
+        progress_logger.info("\nStarting test epoch...")
+        # print("\nStarting test epoch...")
 
     def on_test_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.test_epoch_start_time
         readable_time = self.format_time(elapsed_time)
-        # progress_logger.info(f"Test epoch completed in {readable_time}")
-        print(f"Test epoch completed in {readable_time}")
+        progress_logger.info(f"Test epoch completed in {readable_time}")
+        # print(f"Test epoch completed in {readable_time}")
 
     # Test Batch Timing
     # def on_test_batch_start(self, trainer, pl_module, batch, batch_idx):
@@ -416,10 +416,10 @@ def main(args):
 
     last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"\nResume training from checkpoint '{last_ckpt_file}'")
+        print(f"\nResume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
     else:
-        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
+        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,

@@ -242,7 +242,7 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
-        print("Using SLURM environment plugin!\n")
+        print("Using SLURM environment plugin!")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
     trainer = Trainer(max_epochs=args.epochs,
@@ -267,10 +267,10 @@ def main(args):
     # Adapted code
     last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"\nResume training from checkpoint '{last_ckpt_file}'")
+        print(f"\nResume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
     else:
-        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
+        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
