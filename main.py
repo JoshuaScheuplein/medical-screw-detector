@@ -71,7 +71,7 @@ class EpochLoggingCallback(Callback):
     # Validation Epoch Timing
     def on_validation_epoch_start(self, trainer, pl_module):
         self.val_epoch_start_time = time.time()
-        progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1}...")
+        progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1} ...")
         # print(f"Starting validation epoch {trainer.current_epoch + 1}...")
 
     def on_validation_epoch_end(self, trainer, pl_module):
@@ -91,7 +91,7 @@ class EpochLoggingCallback(Callback):
     # Test Epoch Timing
     def on_test_epoch_start(self, trainer, pl_module):
         self.test_epoch_start_time = time.time()
-        progress_logger.info("\nStarting test epoch...")
+        progress_logger.info("\nStarting test epoch ...")
         # print("\nStarting test epoch...")
 
     def on_test_epoch_end(self, trainer, pl_module):
