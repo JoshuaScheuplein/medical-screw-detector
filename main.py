@@ -5,6 +5,7 @@ import torch
 import wandb
 import time # Additionally added
 from datetime import timedelta # Additionally added
+from pathlib import Path # Additionally added
 
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -186,13 +187,27 @@ def main(args):
     # init callbacks
     #########################
 
+    checkpoint_dir = os.path.join(args.result_dir, "Checkpoints")
+    # os.makedirs(checkpoint_dir, exist_ok=True)
+    Path(checkpoint_dir).mkdir(parents=False, exist_ok=True)
+
+    # Additionally added
+    checkpoint_last_callback = ModelCheckpoint(
+        save_top_k=1,
+        monitor="epoch",
+        mode="max",
+        dirpath=checkpoint_dir,
+        filename="backup_checkpoint",
+        save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
+    )
+
     # saves top-K checkpoints based on "train_loss" metric
     checkpoint_train_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="train_loss",
         mode="min",
-        dirpath=args.result_dir,
-        filename="checkpoint-train_loss-{epoch:02d}-{train_loss:.2f}",
+        dirpath=checkpoint_dir, # Original: args.result_dir
+        filename="checkpoint-training-{epoch:02d}-{train_loss:.2f}",
         save_last=True # saves a last.ckpt copy whenever a checkpoint file gets saved
     )
 
@@ -201,8 +216,8 @@ def main(args):
         save_top_k=1,
         monitor="val_loss",
         mode="min",
-        dirpath=args.result_dir,
-        filename="checkpoint-val_loss-{epoch:02d}-{val_loss:.2f}",
+        dirpath=checkpoint_dir, # Original: args.result_dir
+        filename="checkpoint-validation-{epoch:02d}-{val_loss:.2f}",
         save_last=False,
     )
 
@@ -241,10 +256,19 @@ def main(args):
                       plugins=plugins,
                       )
 
-    last_ckpt_file = args.result_dir + "/last.ckpt"
+    # Original code
+    # last_ckpt_file = args.result_dir + "/last.ckpt"
+    # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
+    #     print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+    #     args.checkpoint_file = last_ckpt_file
+
+    # Adapted code
+    last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+        print(f"\nResume training from checkpoint '{last_ckpt_file}'")
         args.checkpoint_file = last_ckpt_file
+    else:
+        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
