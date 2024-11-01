@@ -103,7 +103,8 @@ def compile_kernels():
         import os
         import sys
         # path = os.path.join(os.path.dirname(__file__), "models")
-        path = os.path.dirname(os.path.dirname(__file__))
+        # path = os.path.dirname(os.path.dirname(__file__))
+        path = os.path.dirname(__file__)
         print("Adding path to PYTHONPATH:", path)
         sys.path.append(path) # Adds the current directory tp $PYTHONPATH
         ######################################################################################
