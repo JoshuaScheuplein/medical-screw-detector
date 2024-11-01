@@ -16,8 +16,10 @@ from pytorch_lightning import Callback # Additionall added
 from torch.utils.data import DataLoader
 
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
-from lightning.prediction_logging_callback import PredictionLoggingCallback
-from lightning.detr_model import DeformableDETRLightning
+# from lightning.prediction_logging_callback import PredictionLoggingCallback       # Original code
+# from lightning.detr_model import DeformableDETRLightning                          # Original code
+from lightning_copy.prediction_logging_callback import PredictionLoggingCallback    # Adapted code
+from lightning_copy.detr_model import DeformableDETRLightning                       # Adapted code
 from utils.custom_arg_parser import get_args_parser
 
 ###############################################################
