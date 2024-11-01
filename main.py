@@ -237,7 +237,7 @@ def main(args):
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
                       callbacks=[checkpoint_train_callback, checkpoint_val_callback,
                                  prediction_logging_callback, epoch_logging_callback], # Adapted Code
-                      enable_progress_bar=True, # Additionally added
+                      enable_progress_bar=False, # Additionally added
                       plugins=plugins,
                       )
 
