@@ -210,7 +210,7 @@ def main(args):
         mode="min",
         dirpath=checkpoint_dir, # Original: args.result_dir
         filename="checkpoint-training-{epoch:02d}-{train_loss:.2f}",
-        save_last=True # saves a last.ckpt copy whenever a checkpoint file gets saved
+        save_last=False # Originally set to 'True'
     )
 
     # saves top-K checkpoints based on "val_loss" metric
@@ -252,7 +252,7 @@ def main(args):
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100,
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      callbacks=[checkpoint_train_callback, checkpoint_val_callback,
+                      callbacks=[checkpoint_last_callback, checkpoint_val_callback, checkpoint_train_callback,
                                  prediction_logging_callback, epoch_logging_callback], # Adapted Code
                       enable_progress_bar=False, # Additionally added
                       plugins=plugins,

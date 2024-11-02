@@ -20,7 +20,9 @@ unset SLURM_EXPORT_ENV        # Enable export of environment from this script to
 
 ############  FILE PATHS  ##################
 
-CHECKPOINT="$HPCVAULT/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth"
+BACKBONE_CHECKPOINT="$HPCVAULT/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth"
+
+DETR_CHECKPOINT="$HOME/Screw-Detection-Results/Job-924402/Checkpoints/last.ckpt"
 
 SRC_DIR="$HOME/medical-screw-detector"
 
@@ -52,9 +54,9 @@ nvidia-smi
 echo -e "\nPython reaches GPU: $(python -c 'import torch; print(torch.cuda.is_available())')\n"
 
 # Copy bash script for reproducibility
-mkdir -p "$RESULTS_DIR"
-cd "$SRC_DIR/scripts" || echo "Error: Failed to change into $SRC_DIR/scripts"
-cp "$SRC_DIR/scripts/sparse_detr_medical_resnet50.sh" "$RESULTS_DIR/sparse_detr_medical_resnet50_$SLURM_JOB_ID.sh"
+# mkdir -p "$RESULTS_DIR"
+# cd "$SRC_DIR/scripts" || echo "Error: Failed to change into $SRC_DIR/scripts"
+# cp "$SRC_DIR/scripts/sparse_detr_medical_resnet50.sh" "$RESULTS_DIR/sparse_detr_medical_resnet50_$SLURM_JOB_ID.sh"
 
 # Copy training data to faster drive
 mkdir -p "$FAST_DATA_DIR"
@@ -85,12 +87,15 @@ git log --oneline -n 1
 echo -e "\nTraining started at $(date)"
 
 # Note: Dafault batch size = 3
+# --job_ID "$SLURM_JOB_ID" \
+# --result_dir "$RESULTS_DIR" \
 srun python3 main.py \
-  --job_ID "$SLURM_JOB_ID" \
+  --job_ID "924402" \
   --data_dir "$FAST_DATA_DIR/V1-1to3objects-400projections-circular" \
-  --result_dir "$RESULTS_DIR" \
+  --result_dir "$HOME/Screw-Detection-Results/Job-924402" \
   --backbone "medical_resnet50" \
-  --backbone_checkpoint_file "$CHECKPOINT" \
+  --backbone_checkpoint_file "$BACKBONE_CHECKPOINT" \
+  --checkpoint_file "$DETR_CHECKPOINT" \
   --dataset_reduction 2 \
   --log_wandb \
   --lr 0.00004 \
