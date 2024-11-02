@@ -267,8 +267,10 @@ def main(args):
     # Adapted code
     last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"\nResume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
+        print(f"\nResume training from found checkpoint '{args.checkpoint_file}'\n")
+    elif args.checkpoint_file is not None:
+        print(f"\nResume training from manually specified checkpoint '{args.checkpoint_file}'\n")
     else:
         print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
