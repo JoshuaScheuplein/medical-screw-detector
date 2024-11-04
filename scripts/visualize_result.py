@@ -22,7 +22,7 @@ def main(image_dir, prediction_dir, same_color=False):
     samples = [f for f in os.listdir(datadir_p) if os.path.isdir(datadir_p / f)]
     print(f"processing {len(samples)} samples:")
 
-    for sample in samples:
+    for i, sample in enumerate(samples):
         folder_b = datadir_b / sample
         folder_p = datadir_p / sample
 
@@ -94,7 +94,7 @@ def main(image_dir, prediction_dir, same_color=False):
                     fig.savefig(result_dir / f'prediction_preview_view_{j}_epoch_{epoch_num}.png')
                     plt.close(fig)
 
-        print("done\n")
+        print(f"done ({i+1}/{len(samples)})\n")
 
 
 def plot_screw(p0_x, p0_y, p1_x, p1_y, color):
