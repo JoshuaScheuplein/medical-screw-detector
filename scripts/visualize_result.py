@@ -27,7 +27,8 @@ def main(image_dir, prediction_dir, same_color=False):
         folder_p = datadir_p / sample
 
         # debug plot
-        if (folder_b / "projections.tiff").exists() and (folder_p / "predictions_test_48.json").exists():
+        # if (folder_b / "projections.tiff").exists() and (folder_p / "predictions_test_48.json").exists(): # Original code
+        if (folder_b / "projections.tiff").exists(): # Adapted code
             result_dir = folder_p / "results"
             result_dir.mkdir(parents=False, exist_ok=True)
 
