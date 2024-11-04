@@ -8,7 +8,7 @@ import numpy as np
 import tifffile
 from matplotlib.colors import TABLEAU_COLORS
 
-from utils.data_normalization import neglog_normalize
+from ..utils.data_normalization import neglog_normalize
 
 colors = list(TABLEAU_COLORS.values())
 
@@ -110,8 +110,10 @@ if __name__ == '__main__':
         image_dir_default = r"C:\Users\wagne\Desktop"
         prediction_dir_default = r"C:\Users\wagne\Desktop"
     else:
-        image_dir_default = r"/home/vault/iwi5/iwi5163h"
-        prediction_dir_default = r"/home/hpc/iwi5/iwi5163h/eff_detr_2024_06_10_02_52"
+        # image_dir_default = r"/home/vault/iwi5/iwi5163h"
+        # prediction_dir_default = r"/home/hpc/iwi5/iwi5163h/eff_detr_2024_06_10_02_52"
+        image_dir_default = r"/home/vault/iwi5/iwi5165h"
+        prediction_dir_default = r"/home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-xxxxxx"
 
     parser.add_argument('--image_dir', type=str, default=image_dir_default,
                         help='Directory containing the images')
