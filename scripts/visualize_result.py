@@ -8,7 +8,7 @@ import numpy as np
 import tifffile
 from matplotlib.colors import TABLEAU_COLORS
 
-from ..utils.data_normalization import neglog_normalize
+from utils.data_normalization import neglog_normalize
 
 colors = list(TABLEAU_COLORS.values())
 
