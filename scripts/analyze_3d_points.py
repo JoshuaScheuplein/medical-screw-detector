@@ -117,8 +117,10 @@ if __name__ == '__main__':
         image_dir_default = r"C:\Users\wagne\Desktop"
         prediction_dir_default = r"C:\Users\wagne\Desktop"
     else:
-        image_dir_default = r"/home/vault/iwi5/iwi5163h"
-        prediction_dir_default = r"/home/hpc/iwi5/iwi5163h/eff_detr_2024_06_10_02_52"
+        # image_dir_default = r"/home/vault/iwi5/iwi5163h"
+        # prediction_dir_default = r"/home/hpc/iwi5/iwi5163h/eff_detr_2024_06_10_02_52"
+        image_dir_default = r"/home/vault/iwi5/iwi5165h"
+        prediction_dir_default = r"/home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-xxxxxx"
 
     parser.add_argument('--image_dir', type=str, default=image_dir_default,
                         help='Directory containing the images')
@@ -142,7 +144,7 @@ if __name__ == '__main__':
 
     overall_screws = 0
 
-    for sample in samples:
+    for s, sample in enumerate(samples):
         folder_b = datadir_b / sample
         folder_p = datadir_p / sample
 
@@ -157,12 +159,12 @@ if __name__ == '__main__':
         tips_list = []
 
         # debug plot
-        if (folder_b / "labels.json").exists() and (folder_p / "predictions_test_48.json").exists():
+        if (folder_b / "labels.json").exists() and (folder_p / "predictions_test_50.json").exists():
 
             # read projections
             print(f"computing 3D loss for {folder_b}")
             tgt = json.load(open(folder_b / "labels.json"))
-            pred = json.load(open(folder_p / "predictions_test_48.json"))
+            pred = json.load(open(folder_p / "predictions_test_50.json"))
 
             views = []
 
@@ -283,4 +285,4 @@ if __name__ == '__main__':
     print(f"full test dataset avg angle deviation: {overall_avg_angle_deviation / overall_screws:.3f}°")
     print(f"full test dataset avg cardinality deviation: {int(overall_avg_cardinality / overall_screws)}")
 
-    print("done\n")
+    print(f"done ({s+1}/{len(samples)})\n")
