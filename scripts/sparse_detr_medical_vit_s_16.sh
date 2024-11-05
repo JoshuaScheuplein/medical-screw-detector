@@ -14,7 +14,7 @@ unset SLURM_EXPORT_ENV        # Enable export of environment from this script to
 
 ############  DESCRIPTION  #################
 
-# Screw Detection with sparse DETR and CIA layer
+# Screw Detection with sparse DETR
 
 # Checkpoint: DINO_Training_Job_037_ViT-S-16_0200
 
@@ -86,7 +86,6 @@ git log --oneline -n 1
 # Start model training
 echo -e "\nTraining started at $(date)"
 
-# Note: Dafault batch size = 3
 # --job_ID "$SLURM_JOB_ID" \
 # --result_dir "$RESULTS_DIR" \
 srun python3 main.py \
