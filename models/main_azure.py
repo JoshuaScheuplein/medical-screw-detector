@@ -1,124 +1,5 @@
-# from __future__ import absolute_import # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
-# from __future__ import print_function # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
-# from __future__ import division # Additionally added to debug 'No module named 'MultiScaleDeformableAttention'
-
-# /azureml-envs/azureml_11b082f67ffcaf3a350f2a66b0190a94/lib/python3.9/site-packages/MultiScaleDeformableAttention-1.0-py3.9-linux-x86_64.egg
-# /azureml-envs/azureml_11b082f67ffcaf3a350f2a66b0190a94/lib/python3.9/site-packages
 
 print("\nEntered 'main_azure.py' ...")
-
-def compile_kernels():
-
-    import os
-    import sys
-    import torch
-
-    # Check if distributed mode is initialized and get the rank
-    if torch.distributed.is_initialized():
-        rank = torch.distributed.get_rank()
-    else:
-        rank = 0 # Assume rank 0 if not distributed
-
-    # Only execute on GPU with rank 0
-    if rank == 0:
-        
-        print("PYTHONPATH Old:", sys.path)
-
-        os.system("echo '\nExecuting <pwd> command:'")
-        os.system("pwd")
-
-        os.system("echo '\n#################################################################'")
-
-        os.system("echo '\nExecuting <ls> command:'")
-        os.system("ls")
-
-        os.system("echo '\nExecuting <ls models/ops> command:'")
-        os.system("ls models/ops")
-
-        os.system("echo '\nExecuting <ls models/ops/functions> command:'")
-        os.system("ls models/ops/functions")
-
-        os.system("echo '\nExecuting <ls models/ops/modules> command:'")
-        os.system("ls models/ops/modules")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Executing <setup.py>:'")
-        os.system("echo '#################################################################'")
-
-        # os.system("python models/ops/setup.py build install")
-
-        # Convert line endings in make.sh to Unix format
-        # prefix "b" indicates binary mode
-        with open("models/ops/make.sh", "rb") as f:
-            content = f.read()
-        with open("models/ops/make.sh", "wb") as f:
-            f.write(content.replace(b"\r\n", b"\n"))
-
-        os.system("cd ./models/ops && chmod +x make.sh && ./make.sh")
-
-        os.system("echo '#################################################################'")
-
-        os.system("echo '\nExecuting <ls> command:'")
-        os.system("ls")
-
-        os.system("echo '\nExecuting <ls models/ops> command:'")
-        os.system("ls models/ops")
-
-        os.system("echo '\nExecuting <ls models/ops/functions> command:'")
-        os.system("ls models/ops/functions")
-
-        os.system("echo '\nExecuting <ls models/ops/modules> command:'")
-        os.system("ls models/ops/modules")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Available packages in active environment:'")
-        os.system("echo '#################################################################'")
-        os.system("conda list")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Running unit test script <test.py>:'")
-        os.system("echo '#################################################################'")
-        os.system("python models/ops/test.py")
-        os.system("echo '#################################################################'")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Test 1 for import of package <MultiScaleDeformableAttention>:'")
-        os.system("echo '#################################################################'")
-        os.system("python models/ops/functions/test_import_1.py")
-        os.system("echo '#################################################################'")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Test 2 for import of package <MultiScaleDeformableAttention>:'")
-        os.system("echo '#################################################################'")
-        os.system("python models/ops/test_import_2.py")
-        os.system("echo '#################################################################'")
-
-        os.system("echo '\n#################################################################'")
-        os.system("echo 'Test 3 for import of package <MultiScaleDeformableAttention>:'")
-        os.system("echo '#################################################################'")
-        os.system("python models/test_import_3.py")
-        os.system("echo '#################################################################'")
-
-        os.system("echo '\n#################################################################'")
-        os.system("pip show MultiScaleDeformableAttention")
-        os.system("echo '#################################################################'")
-
-        ######################################################################################
-        import os
-        import sys
-        # path = os.path.join(os.path.dirname(__file__), "models")
-        path = os.path.dirname(os.path.dirname(__file__))
-        print("Adding path to PYTHONPATH:", path)
-        sys.path.append(path) # Adds the current directory tp $PYTHONPATH
-        ######################################################################################
-
-        print("PYTHONPATH New:", sys.path)
-
-    # Synchronize all GPUs to wait until rank 0 completes the above commands
-    if torch.distributed.is_initialized():
-        torch.distributed.barrier()
-
-# compile_kernels()
 
 print("\nStarting to import necessary packages ...")
 
@@ -144,30 +25,31 @@ from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.plugins.environments import SLURMEnvironment
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Callback # Additionall added
+from pytorch_lightning.utilities.rank_zero import rank_zero_only # Additionally added
 
 #######################################################################################
 try:
     import MultiScaleDeformableAttention as MSDA
-    print("Success")
-    print("'MultiScaleDeformableAttention' is located at:", MSDA.__file__)
+    print("\n'MultiScaleDeformableAttention' is located at:", MSDA.__file__)
 except Exception as e:
-    print("Failed to import 'MultiScaleDeformableAttention' in main_azure.py")
+    print("\nFailed to import 'MultiScaleDeformableAttention' in main_azure.py")
     print(e)
 #######################################################################################
 
-# Original code
+#######################################################################################
+# Additionally added PYTHONPATH since main_azure.py is located in folder 'models'
 import sys
-print("PYTHONPATH in main_azure.py:", sys.path)
+print("\nPYTHONPATH 1 in main_azure.py:", sys.path)
+path = os.path.dirname(os.path.dirname(__file__))
+print("Adding path to PYTHONPATH:", path)
+sys.path.append(path)
+print("PYTHONPATH 2 in main_azure.py:", sys.path)
+#######################################################################################
+
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
 from lightning_copy.prediction_logging_callback import PredictionLoggingCallback
 from lightning_copy.detr_model import DeformableDETRLightning
 from utils.custom_arg_parser import get_args_parser
-
-# Adapted code
-# from ..dataset.DatasetBuilder import build_dataset, custom_collate_fn
-# from ..lightning_copy.prediction_logging_callback import PredictionLoggingCallback
-# from ..lightning_copy.detr_model import DeformableDETRLightning
-# from ..utils.custom_arg_parser import get_args_parser
 
 print("\nSuccessfully imported all required packages!")
 
@@ -195,11 +77,13 @@ class EpochLoggingCallback(Callback):
         return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:03}"
 
     # Training Epoch Timing
+    @rank_zero_only # Additionally added
     def on_train_epoch_start(self, trainer, pl_module):
         self.train_epoch_start_time = time.time()
         progress_logger.info(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
         # print(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
 
+    @rank_zero_only # Additionally added
     def on_train_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.train_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -207,19 +91,23 @@ class EpochLoggingCallback(Callback):
         # print(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Training Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Training batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Validation Epoch Timing
+    @rank_zero_only # Additionally added
     def on_validation_epoch_start(self, trainer, pl_module):
         self.val_epoch_start_time = time.time()
         progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1} ...")
         # print(f"Starting validation epoch {trainer.current_epoch + 1}...")
 
+    @rank_zero_only # Additionally added
     def on_validation_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.val_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -227,19 +115,23 @@ class EpochLoggingCallback(Callback):
         # print(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Validation Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Validation batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Test Epoch Timing
+    @rank_zero_only # Additionally added
     def on_test_epoch_start(self, trainer, pl_module):
         self.test_epoch_start_time = time.time()
         progress_logger.info("\nStarting test epoch ...")
         # print("\nStarting test epoch...")
 
+    @rank_zero_only # Additionally added
     def on_test_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.test_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -247,33 +139,35 @@ class EpochLoggingCallback(Callback):
         # print(f"Test epoch completed in {readable_time}")
 
     # Test Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_test_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Test batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
 
-def main(args):
+def main(args, print_flag):
 
     #########################
     # save settings
     #########################
 
-    # args.lr = args.lr * args.num_gpus
-    # args.lr_backbone = args.lr_backbone * args.num_gpus
+    # args.lr = args.lr * args.num_gpus * args.num_nodes
+    # args.lr_backbone = args.lr_backbone * args.num_gpus * args.num_nodes
 
-    output_file = Path(args.result_dir) / f"{args.job_ID}_settings.json"
-    with open(output_file, 'w') as f:
-        json.dump(vars(args), f, indent=4)
+    if print_flag:
+        output_file = Path(args.result_dir) / f"{args.job_ID}_settings.json"
+        with open(output_file, 'w') as f:
+            json.dump(vars(args), f, indent=4)
 
     #########################
     # init logger
     #########################
 
     if args.log_wandb:
-
         try:
             api_key = os.environ["WANDB_API_KEY"]
             wandb.login(key=api_key)
@@ -297,8 +191,7 @@ def main(args):
                              save_dir=args.result_dir, # where to store wandb files
                              save_code=True, # save main script
                              resume="allow", # needed in case of preempted job
-                             )
-                   
+                             )  
     else:
         # logger = CSVLogger("logs", name="local_log") # Original
         logger = CSVLogger(save_dir=args.result_dir, flush_logs_every_n_steps=1) # Adapted
@@ -309,8 +202,9 @@ def main(args):
     # init dataloader
     #########################
 
-    print("\nBatchsize:", args.batch_size)
-    print("Num Workers:", args.num_workers)
+    if print_flag:
+        print("\nBatchsize:", args.batch_size)
+        print("Num Workers:", args.num_workers)
 
     dataset_train = build_dataset(image_set='train', args=args)
     dataset_val = build_dataset(image_set='val', args=args)
@@ -334,9 +228,10 @@ def main(args):
                                   collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                   persistent_workers=True)
 
-    print(f"\nNumber of batches in 'Train' Dataloader: {len(data_loader_train)}")
-    print(f"Number of batches in 'Val' Dataloader: {len(data_loader_val)}")
-    print(f"Number of batches in 'Test' Dataloader: {len(data_loader_test)}")
+    if print_flag:
+        print(f"\nNumber of batches in 'Train' Dataloader: {len(data_loader_train)}")
+        print(f"Number of batches in 'Val' Dataloader: {len(data_loader_val)}")
+        print(f"Number of batches in 'Test' Dataloader: {len(data_loader_test)}")
 
     #########################
     # init callbacks
@@ -378,11 +273,9 @@ def main(args):
 
     for dataset in [dataset_train, dataset_val, dataset_test]:
         for volume_name in dataset.volume_names:
-            prediction_path = os.path.join(args.result_dir,
-                                           os.path.basename(os.path.normpath(dataset.data_dir)),
-                                           volume_name)
+            prediction_path = os.path.join(args.result_dir, args.dataset_name, volume_name)
             # os.makedirs(prediction_path, exist_ok=True)
-            Path(prediction_path).mkdir(parents=False, exist_ok=True)
+            Path(prediction_path).mkdir(parents=True, exist_ok=True)
 
     prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
     epoch_logging_callback = EpochLoggingCallback() # Additionally added
@@ -416,10 +309,12 @@ def main(args):
 
     last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        print(f"\nResume training from checkpoint '{last_ckpt_file}'\n")
+        if print_flag:
+            print(f"\nResume training from checkpoint '{last_ckpt_file}'")
         args.checkpoint_file = last_ckpt_file
     else:
-        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+        if print_flag:
+            print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
@@ -435,22 +330,34 @@ def main(args):
 
 
 if __name__ == '__main__':
+
+    print(f"\ntorch.distributed.is_initialized() = {torch.distributed.is_initialized()}")
+    if torch.distributed.is_initialized():
+        rank = torch.distributed.get_rank()
+    else:
+        rank = 0 # Assume rank 0 if not using distributed training
+
+    if rank == 0:
+        print_flag = True
+        print(f"\nSetting print_flag = '{print_flag}' on device with rank {rank}")
+    else:
+        print_flag = False
+        print(f"\nSetting print_flag = '{print_flag}' on device with rank {rank}")
     
     parser = argparse.ArgumentParser('Deformable DETR Detector for implants', parents=[get_args_parser()])
     args = parser.parse_args()
 
-    #########################
-    # build CUDA kernels
-    #########################
-    print("\nEntered main method ...")
-    # compile_kernels()
-    
+    if print_flag:
+        print("\nEntered main method of main_azure.py script ...")
+        for k, v in vars(args).items():
+            print(f"{k} = {v}")
+
     #########################
     # create result_dir
     #########################
     try:
-        # os.mkdir(args.result_dir)
-        Path(args.result_dir).mkdir(parents=False, exist_ok=False)
+        os.mkdir(args.result_dir)
+        # Path(args.result_dir).mkdir(parents=False, exist_ok=False)
         print(f"\nResult directory '{args.result_dir}' created successfully.")
     except FileExistsError:
         print(f"\nResult directory '{args.result_dir}' already exists.")
@@ -460,4 +367,4 @@ if __name__ == '__main__':
     #########################
     # start model training
     #########################
-    main(args)
+    main(args, print_flag)

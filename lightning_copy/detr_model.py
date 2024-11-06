@@ -46,13 +46,13 @@ class DeformableDETRLightning(LightningModule):
         loss_dict = self.criterion(prediction, targets)
 
         for k, v in loss_dict.items():
-            self.log(f"{mode}_{k}", v, on_epoch=True, on_step=True, batch_size=batch_size)
+            self.log(f"{mode}_{k}", v, on_epoch=True, on_step=True, batch_size=batch_size, sync_dist=True) # 'sync_dist=True' was additionally added
 
         weight_dict = self.criterion.weight_dict
         actual_loss_dict = {k: loss_dict[k] * weight_dict[k] for k in loss_dict.keys() if k in weight_dict}
 
         loss = sum(actual_loss_dict.values())
-        self.log(f"{mode}_loss", loss, on_epoch=True, on_step=True, batch_size=batch_size)
+        self.log(f"{mode}_loss", loss, on_epoch=True, on_step=True, batch_size=batch_size, sync_dist=True) # 'sync_dist=True' was additionally added
 
         return {"loss": loss, "prediction": prediction}
 

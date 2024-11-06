@@ -77,6 +77,10 @@ class DefaultArgs:
 
     # * checkpointing
     result_dir = r"E:\MA_Data\results"
+
+    # Additionally added
+    num_gpus = 1
+    num_nodes = 1
     
 
 def get_args_parser():
@@ -185,8 +189,9 @@ def get_args_parser():
                         help='directory to store results like logs and checkpoints')
 
     # Additionally added
+    parser.add_argument('--dataset_name', default="V1-1to3objects-400projections-circular", type=str, help='Dataset name')
     parser.add_argument('--job_ID', default="Test_Job", type=str, help='Unique job ID')
-    parser.add_argument('--num_gpus', default=1, type=int, help='Number of GPUs per node')
-    parser.add_argument('--num_nodes', default=1, type=int, help='Number of available nodes')                         
+    parser.add_argument('--num_gpus', default=DefaultArgs.num_gpus, type=int, help='Number of GPUs per node')
+    parser.add_argument('--num_nodes', default=DefaultArgs.num_nodes, type=int, help='Number of available nodes')                         
 
     return parser

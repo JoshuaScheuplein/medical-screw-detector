@@ -15,7 +15,6 @@ from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Callback # Additionall added
 
 from torch.utils.data import DataLoader
-
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
 
 # from lightning.prediction_logging_callback import PredictionLoggingCallback       # Original code

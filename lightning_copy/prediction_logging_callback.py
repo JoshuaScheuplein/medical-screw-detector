@@ -5,6 +5,7 @@ from typing import Any, Optional
 
 from pytorch_lightning import Callback
 from pytorch_lightning.utilities.types import STEP_OUTPUT
+from pytorch_lightning.utilities.rank_zero import rank_zero_only # Additionally added
 
 
 class PredictionLoggingCallback(Callback):
@@ -16,18 +17,23 @@ class PredictionLoggingCallback(Callback):
 
         self.log_index = 40 // batch_size
 
+    @rank_zero_only # Additionally added
     def on_validation_epoch_start(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule") -> None:
         self.create_empty_labels_list(trainer.val_dataloaders.dataset)
 
+    @rank_zero_only # Additionally added
     def on_test_epoch_start(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule") -> None:
         self.create_empty_labels_list(trainer.test_dataloaders.dataset)
 
+    @rank_zero_only # Additionally added
     def on_validation_epoch_end(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule") -> None:
         self.dump_labels_list(trainer.val_dataloaders.dataset, trainer.current_epoch, "val")
 
+    @rank_zero_only # Additionally added
     def on_test_epoch_end(self, trainer: "pl.Trainer", pl_module: "pl.LightningModule") -> None:
         self.dump_labels_list(trainer.test_dataloaders.dataset, trainer.current_epoch, "test")
 
+    @rank_zero_only # Additionally added
     def on_validation_batch_end(
             self,
             trainer: "pl.Trainer",
@@ -41,6 +47,7 @@ class PredictionLoggingCallback(Callback):
             dataloader = trainer.val_dataloaders
             self.write_result(dataloader, batch, outputs)
 
+    @rank_zero_only # Additionally added
     def on_test_batch_end(
             self,
             trainer: "pl.Trainer",
@@ -65,7 +72,8 @@ class PredictionLoggingCallback(Callback):
     def dump_labels_list(self, dataset, epoch, state):
         for volume_idx in range(len(self.labels_list)):
             prediction_file_path = os.path.join(self.result_dir,
-                                                os.path.basename(os.path.normpath(dataset.data_dir)),
+                                                # os.path.basename(os.path.normpath(dataset.data_dir)), # Original code
+                                                "V1-1to3objects-400projections-circular", # Adapted code
                                                 dataset.volume_names[volume_idx],
                                                 f"predictions_{state}_{epoch}.json")
 
