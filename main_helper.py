@@ -19,7 +19,9 @@ def compile_kernels():
 
     # Only execute on GPU with rank 0
     if rank == 0:
-        os.system(f"echo '\nCompilation of CUDA kernels on device with rank {rank}'")
+        os.system("echo '\n#################################################################'")
+        os.system(f"echo 'Compilation of CUDA kernels on device with rank {rank}'")
+        os.system("echo '#################################################################'")
 
         os.system("echo '\n#################################################################'")
         os.system("echo 'Executing <pwd> command:'")
@@ -75,7 +77,9 @@ def compile_kernels():
         os.system("echo '#################################################################'")
 
     else:
-        os.system(f"echo '\nSkipping execution of main_azure.py script on device with rank {rank}'")
+        os.system("echo '\n#################################################################'")
+        os.system(f"echo 'Skipping compilation of CUDA kernels on device with rank {rank}'")
+        os.system("echo '#################################################################'")
 
     # Synchronize all GPUs to wait until rank 0 completes the above commands
     if torch.distributed.is_initialized():

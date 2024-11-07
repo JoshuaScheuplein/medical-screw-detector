@@ -20,7 +20,7 @@ def cluster_dataset_split():
     
     TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ]
 
-    print(f"\nVolumes for training: {TRAINV1}")
+    print(f"Volumes for training: {TRAINV1}")
     print(f"Volumes for validation: {VALV1}")
     print(f"Volumes for testing: {TESTV1}")
 
@@ -125,6 +125,7 @@ def local_dataset_split():
 
 
 def custom_collate_fn(batch):
+
     # Separate the batch into individual components
     projections = [item[0] for item in batch]
     targets = [item[1] for item in batch]

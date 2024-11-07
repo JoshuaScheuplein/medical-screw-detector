@@ -20,6 +20,7 @@ import torchvision # Additionally added to solve import issue ...
 from torch.utils.data import DataLoader
 
 from pytorch_lightning import Trainer
+from pytorch_lightning import seed_everything # Additionally added
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.plugins.environments import SLURMEnvironment
@@ -152,11 +153,19 @@ class EpochLoggingCallback(Callback):
 def main(args, print_flag):
 
     #########################
-    # save settings
+    # set seeds for numpy, torch, python.random and PYTHONHASHSEED
+    # (Additionally added)
     #########################
 
-    # args.lr = args.lr * args.num_gpus * args.num_nodes
-    # args.lr_backbone = args.lr_backbone * args.num_gpus * args.num_nodes
+    seed_everything(42, workers=True)
+
+    #########################
+    # save settings
+    # (Additionally added)
+    #########################
+
+    args.lr = args.lr * args.num_gpus * args.num_nodes
+    args.lr_backbone = args.lr_backbone * args.num_gpus * args.num_nodes
 
     if print_flag:
         output_file = Path(args.result_dir) / f"{args.job_ID}_settings.json"
@@ -209,24 +218,49 @@ def main(args, print_flag):
     dataset_train = build_dataset(image_set='train', args=args)
     dataset_val = build_dataset(image_set='val', args=args)
     dataset_test = build_dataset(image_set='test', args=args)
+    
+    #####################################################################################################
+    # Original code
+    #####################################################################################################
+    # sampler_train = torch.utils.data.RandomSampler(dataset_train)
+    # sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    # sampler_test = torch.utils.data.SequentialSampler(dataset_test)
 
-    sampler_train = torch.utils.data.RandomSampler(dataset_train)
-    sampler_val = torch.utils.data.SequentialSampler(dataset_val)
-    sampler_test = torch.utils.data.SequentialSampler(dataset_test)
+    # batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
 
-    batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
+    # data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
+    #                                collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                                pin_memory=False, persistent_workers=True)
 
-    data_loader_train = DataLoader(dataset_train, batch_sampler=batch_sampler_train,
+    # data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val, drop_last=False,
+    #                              collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                              pin_memory=False, persistent_workers=True)
+
+    # data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
+    #                               collate_fn=custom_collate_fn, num_workers=args.num_workers,
+    #                               persistent_workers=True)
+
+    #####################################################################################################
+    # Original code
+    #####################################################################################################
+    # sampler_train = torch.utils.data.RandomSampler(dataset_train)
+    # sampler_val = torch.utils.data.SequentialSampler(dataset_val)
+    # sampler_test = torch.utils.data.SequentialSampler(dataset_test)
+
+    # batch_sampler_train = torch.utils.data.BatchSampler(sampler_train, args.batch_size, drop_last=True)
+
+    data_loader_train = DataLoader(dataset_train, args.batch_size, shuffle=True, drop_last=True,
                                    collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                    pin_memory=False, persistent_workers=True)
 
-    data_loader_val = DataLoader(dataset_val, args.batch_size, sampler=sampler_val, drop_last=False,
+    data_loader_val = DataLoader(dataset_val, args.batch_size, shuffle=False, drop_last=False,
                                  collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                  pin_memory=False, persistent_workers=True)
 
-    data_loader_test = DataLoader(dataset_test, args.batch_size, sampler=sampler_test, drop_last=False,
+    data_loader_test = DataLoader(dataset_test, args.batch_size, shuffle=False, drop_last=False,
                                   collate_fn=custom_collate_fn, num_workers=args.num_workers,
                                   persistent_workers=True)
+    #####################################################################################################
 
     if print_flag:
         print(f"\nNumber of batches in 'Train' Dataloader: {len(data_loader_train)}")
@@ -294,10 +328,18 @@ def main(args, print_flag):
 
     trainer = Trainer(max_epochs=args.epochs,
                       logger=logger,
-                      devices=args.num_gpus, # Adapted for multi-GPU training
-                      num_nodes=args.num_nodes, # Adapted for multi-GPU training
-                      accelerator="gpu", # Adapted for multi-GPU training (Enable GPU acceleration)
-                      strategy="ddp", # Adapted for multi-GPU training (Distributed Data Parallel strategy)
+                      #####################################################################################
+                      # Adapted for multi-GPU training
+                      #####################################################################################
+                      accelerator="gpu", # Enable GPU acceleration
+                      # strategy= "ddp",
+                      # RuntimeError: It looks like your LightningModule has parameters that were not used in producing the loss returned by training_step.
+                      strategy="ddp_find_unused_parameters_true", # Distributed Data Parallel strategy
+                      use_distributed_sampler=True,
+                      devices=args.num_gpus,
+                      num_nodes=args.num_nodes,
+                      sync_batchnorm=True,
+                      #####################################################################################
                       default_root_dir=args.result_dir,
                       log_every_n_steps=100,
                       # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
@@ -310,11 +352,11 @@ def main(args, print_flag):
     last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
         if print_flag:
-            print(f"\nResume training from checkpoint '{last_ckpt_file}'")
+            print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
     else:
         if print_flag:
-            print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...")
+            print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
@@ -331,11 +373,11 @@ def main(args, print_flag):
 
 if __name__ == '__main__':
 
-    print(f"\ntorch.distributed.is_initialized() = {torch.distributed.is_initialized()}")
+    # Check if distributed mode is initialized and get the rank
     if torch.distributed.is_initialized():
         rank = torch.distributed.get_rank()
     else:
-        rank = 0 # Assume rank 0 if not using distributed training
+        rank = 0 # Assume rank 0 if not distributed
 
     if rank == 0:
         print_flag = True
