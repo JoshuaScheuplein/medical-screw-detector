@@ -1,5 +1,6 @@
 import argparse
 import os
+import json # Additionally added
 import signal
 import torch
 import wandb
@@ -111,47 +112,6 @@ class EpochLoggingCallback(Callback):
 def main(args):
 
     #########################
-    # init logger
-    #########################
-
-    if args.log_wandb:
-
-        # wandb.login(key="fc47046192188490a1fcedc7a411218e15247c56")
-        wandb.login(key="b8b1693523deba0245ee3284c25847b029261f90")
-
-        job_name = args.backbone_checkpoint_file.split("/")[-1]
-        assert "DINO_Training_" in job_name
-        job_name = job_name.split("DINO_Training_")[-1]
-        job_name = job_name.replace(".pth", "")
-
-        if args.use_enc_aux_loss:
-            wandb_run_identifier = f"Sparse_DETR_{args.job_ID}_{args.backbone}_{job_name}"
-        elif args.eff_query_init:
-            wandb_run_identifier = f"Efficient_DETR_{args.job_ID}_{args.backbone}_{job_name}"
-        else:
-            wandb_run_identifier = f"Deformable_DETR_{args.job_ID}_{args.backbone}_{job_name}"
-
-        # logger = WandbLogger(project="Deformable DETR for dense image recognition",
-        #                      name=wandb_run_identifier,
-        #                      config=vars(args),
-        #                      save_dir=args.result_dir)
-
-        logger = WandbLogger(project="MedDINO",
-                             group="Screw-Detection", # organize individual runs into a larger experiment
-                             entity="joshua-scheuplein", # username
-                             name=wandb_run_identifier, # general job descriptor
-                             id=wandb_run_identifier, # unique job descriptor
-                             config=args, # save settings and hyperparameters
-                             save_dir=args.result_dir, # where to store wandb files
-                             save_code=True, # save main script
-                             resume="allow", # needed in case of preempted job
-                             )
-                   
-    else:
-        # logger = CSVLogger("logs", name="local_log") # Original
-        logger = CSVLogger(save_dir=args.result_dir, flush_logs_every_n_steps=1) # Adapted
-
-    #########################
     # init dataloader
     #########################
 
@@ -185,55 +145,7 @@ def main(args):
     print(f"Number of batches in 'Test' Dataloader: {len(data_loader_test)}")
 
     #########################
-    # init callbacks
-    #########################
-
-    checkpoint_dir = os.path.join(args.result_dir, "Checkpoints")
-    # os.makedirs(checkpoint_dir, exist_ok=True)
-    Path(checkpoint_dir).mkdir(parents=False, exist_ok=True)
-
-    # Additionally added
-    checkpoint_last_callback = ModelCheckpoint(
-        save_top_k=1,
-        monitor="epoch",
-        mode="max",
-        dirpath=checkpoint_dir,
-        filename="backup_checkpoint",
-        save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
-    )
-
-    # saves top-K checkpoints based on "train_loss" metric
-    checkpoint_train_callback = ModelCheckpoint(
-        save_top_k=1,
-        monitor="train_loss",
-        mode="min",
-        dirpath=checkpoint_dir, # Original: args.result_dir
-        filename="checkpoint-training-{epoch:02d}-{train_loss:.2f}",
-        save_last=False # Originally set to 'True'
-    )
-
-    # saves top-K checkpoints based on "val_loss" metric
-    checkpoint_val_callback = ModelCheckpoint(
-        save_top_k=1,
-        monitor="val_loss",
-        mode="min",
-        dirpath=checkpoint_dir, # Original: args.result_dir
-        filename="checkpoint-validation-{epoch:02d}-{val_loss:.2f}",
-        save_last=False,
-    )
-
-    for dataset in [dataset_train, dataset_val, dataset_test]:
-        for volume_name in dataset.volume_names:
-            prediction_path = os.path.join(args.result_dir,
-                                           os.path.basename(os.path.normpath(dataset.data_dir)),
-                                           volume_name)
-            os.makedirs(prediction_path, exist_ok=True)
-
-    prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
-    epoch_logging_callback = EpochLoggingCallback() # Additionally added
-
-    #########################
-    # Train the model
+    # Load the model
     #########################
 
     detr_model = DeformableDETRLightning(args)
@@ -241,62 +153,40 @@ def main(args):
     if os.name == 'nt':
         plugins = []
     else:
-        print("Using SLURM environment plugin!")
+        print("\nUsing SLURM environment plugin!")
         plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
-    trainer = Trainer(max_epochs=args.epochs,
-                      logger=logger,
-                      devices=1,
+    trainer = Trainer(devices=1,
                       num_nodes=1,
-                      default_root_dir=args.result_dir,
-                      log_every_n_steps=100,
-                      # callbacks=[checkpoint_val_callback, prediction_logging_callback], # Original Code
-                      callbacks=[checkpoint_last_callback, checkpoint_val_callback, checkpoint_train_callback,
-                                 prediction_logging_callback, epoch_logging_callback], # Adapted Code
-                      enable_progress_bar=False, # Additionally added
-                      plugins=plugins,
-                      )
+                      enable_progress_bar=True, # Additionally added
+                      plugins=plugins)
 
-    # Original code
-    # last_ckpt_file = args.result_dir + "/last.ckpt"
-    # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-    #     print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
-    #     args.checkpoint_file = last_ckpt_file
-
-    # Adapted code
-    last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
-    if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        args.checkpoint_file = last_ckpt_file
-        print(f"\nResume training from found checkpoint '{args.checkpoint_file}'\n")
-    elif args.checkpoint_file is not None:
-        print(f"\nResume training from manually specified checkpoint '{args.checkpoint_file}'\n")
-    else:
-        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
-
-    trainer.fit(model=detr_model,
-                train_dataloaders=data_loader_train,
-                val_dataloaders=data_loader_val,
-                ckpt_path=args.checkpoint_file)
+    assert os.path.isfile(args.checkpoint_file), "Could not find model checkpoint!"
+    print(f"\nTestset evaluation for checkpoint '{args.checkpoint_file}'\n")
 
     #########################
     # Test the Model
     #########################
 
     trainer.test(model=detr_model,
-                 dataloaders=data_loader_test)
+                 dataloaders=data_loader_test,
+                 ckpt_path=args.checkpoint_file)
 
 
 if __name__ == '__main__':
-    
-    parser = argparse.ArgumentParser('Deformable DETR Detector for implants', parents=[get_args_parser()])
-    args = parser.parse_args()
 
-    try:
-        os.mkdir(args.result_dir)
-        print(f"\nDirectory '{args.result_dir}' created successfully.")
-    except FileExistsError:
-        print(f"\nDirectory '{args.result_dir}' already exists.")
-    except Exception as e:
-        print(f"\nAn error occurred: {e}")
+    parser = argparse.ArgumentParser('Testset evaluation for screw detection task', add_help=False)
+    parser.add_argument('--settings_file', required=True, type=str)
+    parser.add_argument('--checkpoint_file', required=True, type=str)
+    test_args = parser.parse_args()
+    test_args_dict = vars(test_args)
+
+    assert os.path.isfile(test_args.settings_file), "Could not find .json file containing model settings!"
+    with open(test_args.settings_file, "r") as f:
+        train_args_dict = json.load(f)
+        train_args_dict.pop('checkpoint_file', None) # Ensure that only checkpoint_file for test set is used ...
+    
+    merged_args_dict = {**train_args_dict, **test_args_dict}
+    args = argparse.Namespace(**merged_args_dict)
 
     main(args)
