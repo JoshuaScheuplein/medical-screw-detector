@@ -364,6 +364,8 @@ def main(args, print_flag):
             backup_checkpoints.append(filename)
     if len(backup_checkpoints) > 0:
         last_ckpt_file = os.path.join(checkpoint_dir, sorted(backup_checkpoints)[-1])
+    else:
+        last_ckpt_file = "None"
 
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
         args.checkpoint_file = last_ckpt_file
