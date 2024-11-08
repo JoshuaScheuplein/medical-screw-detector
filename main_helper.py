@@ -157,7 +157,7 @@ if __name__ == '__main__':
     compile_kernels()
 
     # Execute main_azure.py
-    command = f"python models/main_azure.py"
+    command = f"python models/main_azure.py --azure"
     for k, v in vars(args).items():
         if v is not None:
             if (type(v) == bool) and (v == False):

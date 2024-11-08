@@ -281,9 +281,18 @@ def main(args, print_flag):
         monitor="epoch",
         mode="max",
         dirpath=checkpoint_dir,
-        filename="backup_checkpoint",
+        filename="backup_checkpoint_{epoch:02d}",
         save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
     )
+    
+    # checkpoint_last_callback = ModelCheckpoint(
+    #     save_top_k=1,
+    #     monitor="epoch",
+    #     mode="max",
+    #     dirpath=checkpoint_dir,
+    #     filename="backup_checkpoint",
+    #     save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
+    # )
 
     # saves top-K checkpoints based on "train_loss" metric
     checkpoint_train_callback = ModelCheckpoint(
@@ -349,14 +358,32 @@ def main(args, print_flag):
                       # plugins=plugins, # We do not need any plugins on Azure
                       )
 
-    last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
+    backup_checkpoints = []
+    for filename in os.listdir(checkpoint_dir):
+        if filename.startswith("backup_checkpoint_epoch="):
+            backup_checkpoints.append(filename)
+    if len(backup_checkpoints) > 0:
+        last_ckpt_file = os.path.join(checkpoint_dir, sorted(backup_checkpoints)[-1])
+
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-        if print_flag:
-            print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
         args.checkpoint_file = last_ckpt_file
+        if print_flag:
+            print(f"Resume training from checkpoint '{args.checkpoint_file}'\n")
+    elif args.checkpoint_file is not None:
+        if print_flag:
+            print(f"Resume training from manually specified checkpoint '{args.checkpoint_file}'\n")
     else:
         if print_flag:
             print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+    
+    # last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
+    # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
+    #     if print_flag:
+    #         print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+    #     args.checkpoint_file = last_ckpt_file
+    # else:
+    #     if print_flag:
+    #         print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
