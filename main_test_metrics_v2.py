@@ -162,7 +162,6 @@ def main(args):
                       enable_progress_bar=True, # Additionally added
                       plugins=plugins,
                       detect_anomaly=True, # Additionally added
-                      terminate_on_nan=True, # Additionally added
                       )
 
     assert os.path.isfile(args.checkpoint_file), "Could not find model checkpoint!"
