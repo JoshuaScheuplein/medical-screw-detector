@@ -23,7 +23,7 @@ def cluster_dataset_split():
     # 'Ankle18' and 'Ankle19' yield NaN values ...
     # TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
-    TESTV1 = ['Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Adapted code
+    TESTV1 = ['Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Adapted code
 
     print(f"Volumes for training: {TRAINV1}")
     print(f"Volumes for validation: {VALV1}")
