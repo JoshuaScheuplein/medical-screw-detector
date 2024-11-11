@@ -182,3 +182,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args)
+
+
+# ResNet50 with Job-ID 924402
+"""
+python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924402 --backbone "medical_resnet50" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924402/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 2 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
+"""
