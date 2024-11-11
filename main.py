@@ -198,18 +198,27 @@ def main(args):
         monitor="epoch",
         mode="max",
         dirpath=checkpoint_dir,
-        filename="backup_checkpoint",
+        filename="backup_checkpoint_{epoch:02d}",
         save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
     )
+    
+    # checkpoint_last_callback = ModelCheckpoint(
+    #     save_top_k=1,
+    #     monitor="epoch",
+    #     mode="max",
+    #     dirpath=checkpoint_dir,
+    #     filename="backup_checkpoint",
+    #     save_last=False, # saves a last.ckpt copy whenever a checkpoint file gets saved
+    # )
 
     # saves top-K checkpoints based on "train_loss" metric
     checkpoint_train_callback = ModelCheckpoint(
         save_top_k=1,
         monitor="train_loss",
         mode="min",
-        dirpath=checkpoint_dir, # Original: args.result_dir
+        dirpath=checkpoint_dir,
         filename="checkpoint-training-{epoch:02d}-{train_loss:.2f}",
-        save_last=False # Originally set to 'True'
+        save_last=False
     )
 
     # saves top-K checkpoints based on "val_loss" metric
@@ -217,7 +226,7 @@ def main(args):
         save_top_k=1,
         monitor="val_loss",
         mode="min",
-        dirpath=checkpoint_dir, # Original: args.result_dir
+        dirpath=checkpoint_dir,
         filename="checkpoint-validation-{epoch:02d}-{val_loss:.2f}",
         save_last=False,
     )
@@ -257,21 +266,34 @@ def main(args):
                       plugins=plugins,
                       )
 
-    # Original code
-    # last_ckpt_file = args.result_dir + "/last.ckpt"
-    # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-    #     print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
-    #     args.checkpoint_file = last_ckpt_file
+    backup_checkpoints = []
+    for filename in os.listdir(checkpoint_dir):
+        if filename.startswith("backup_checkpoint_epoch="):
+            backup_checkpoints.append(filename)
+    if len(backup_checkpoints) > 0:
+        last_ckpt_file = os.path.join(checkpoint_dir, sorted(backup_checkpoints)[-1])
+    else:
+        last_ckpt_file = "None"
 
-    # Adapted code
-    last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
         args.checkpoint_file = last_ckpt_file
-        print(f"\nResume training from found checkpoint '{args.checkpoint_file}'\n")
+        if print_flag:
+            print(f"Resume training from checkpoint '{args.checkpoint_file}'\n")
     elif args.checkpoint_file is not None:
-        print(f"\nResume training from manually specified checkpoint '{args.checkpoint_file}'\n")
+        if print_flag:
+            print(f"Resume training from manually specified checkpoint '{args.checkpoint_file}'\n")
     else:
-        print(f"\nStarting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+        if print_flag:
+            print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+    
+    # last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
+    # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
+    #     if print_flag:
+    #         print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+    #     args.checkpoint_file = last_ckpt_file
+    # else:
+    #     if print_flag:
+    #         print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
