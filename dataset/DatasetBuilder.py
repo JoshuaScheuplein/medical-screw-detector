@@ -19,7 +19,7 @@ def cluster_dataset_split():
     VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ]
     
     # TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ] # Original code
-    TESTV1 = ['Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ] # Adapted code
+    TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
     print(f"Volumes for training: {TRAINV1}")
     print(f"Volumes for validation: {VALV1}")
