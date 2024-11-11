@@ -1,0 +1,136 @@
+TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted testset
+
+Testing DataLoader 0: 100%|██████████| 1200/1200 [04:10<00:00,  4.80it/s]
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+             Test metric                         DataLoader 0
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+ test_cardinality_error_enc_0_epoch           0.1029166653752327
+ test_cardinality_error_enc_1_epoch           0.04333333298563957
+ test_cardinality_error_enc_2_epoch          0.025833332911133766
+ test_cardinality_error_enc_3_epoch          0.014583333395421505
+ test_cardinality_error_enc_4_epoch          0.009583333507180214
+  test_cardinality_error_enc_epoch           0.007916666567325592
+    test_cardinality_error_epoch             0.015416666865348816
+     test_class_precision_epoch                       0.0
+ test_corr_mask_attn_map_dec_0_epoch         0.020562129095196724
+ test_corr_mask_attn_map_dec_1_epoch          0.46053025126457214
+ test_corr_mask_attn_map_dec_2_epoch          0.9471294283866882
+ test_corr_mask_attn_map_dec_3_epoch          0.9999961256980896
+test_corr_mask_attn_map_dec_all_epoch         0.6350112557411194
+      test_loss_ce_enc_0_epoch                0.03753723204135895
+      test_loss_ce_enc_1_epoch               0.016060542315244675
+      test_loss_ce_enc_2_epoch               0.009223942644894123
+      test_loss_ce_enc_3_epoch               0.005732143297791481
+      test_loss_ce_enc_4_epoch               0.0036351566668599844
+       test_loss_ce_enc_epoch                0.0033189323730766773
+         test_loss_ce_epoch                  0.005171624943614006
+           test_loss_epoch                    2.6467535495758057
+   test_loss_mask_prediction_epoch            0.20344243943691254
+  test_loss_screw_angle_enc_0_epoch            5.525285243988037
+  test_loss_screw_angle_enc_1_epoch           3.6089696884155273
+  test_loss_screw_angle_enc_2_epoch            2.882645606994629
+  test_loss_screw_angle_enc_3_epoch           2.7451987266540527
+  test_loss_screw_angle_enc_4_epoch            2.716275930404663
+   test_loss_screw_angle_enc_epoch             3.22825026512146
+     test_loss_screw_angle_epoch              1.0385733842849731
+  test_loss_screw_head_enc_0_epoch            3.4686203002929688
+  test_loss_screw_head_enc_1_epoch             2.98380970954895
+  test_loss_screw_head_enc_2_epoch            2.8862123489379883
+  test_loss_screw_head_enc_3_epoch            2.8354885578155518
+  test_loss_screw_head_enc_4_epoch             2.737367630004883
+   test_loss_screw_head_enc_epoch              2.855353832244873
+     test_loss_screw_head_epoch                2.533590793609619
+test_loss_screw_midpoint_enc_0_epoch           21.60079002380371
+test_loss_screw_midpoint_enc_1_epoch           16.00824737548828
+test_loss_screw_midpoint_enc_2_epoch          12.151358604431152
+test_loss_screw_midpoint_enc_3_epoch           11.37522029876709
+test_loss_screw_midpoint_enc_4_epoch          10.758983612060547
+ test_loss_screw_midpoint_enc_epoch           11.818158149719238
+   test_loss_screw_midpoint_epoch             3.1712634563446045
+   test_loss_screw_tip_enc_0_epoch             43.57101058959961
+   test_loss_screw_tip_enc_1_epoch            32.283287048339844
+   test_loss_screw_tip_enc_2_epoch            24.431018829345703
+   test_loss_screw_tip_enc_3_epoch            23.080984115600586
+   test_loss_screw_tip_enc_4_epoch             21.77069091796875
+    test_loss_screw_tip_enc_epoch             23.779157638549805
+      test_loss_screw_tip_epoch                6.086359977722168
+    test_precision_angle_10_epoch             0.9648610353469849
+    test_precision_angle_1_epoch              0.7867357134819031
+    test_precision_angle_2_epoch              0.9038889408111572
+    test_precision_angle_3_epoch               0.933819591999054
+    test_precision_angle_4_epoch              0.9465975165367126
+    test_precision_angle_5_epoch              0.9506253004074097
+    test_precision_angle_6_epoch              0.9548612236976624
+    test_precision_angle_7_epoch              0.9584721922874451
+    test_precision_angle_8_epoch              0.9604861736297607
+    test_precision_angle_9_epoch              0.9628471732139587
+    test_precision_head_10_epoch              0.9737498760223389
+     test_precision_head_1_epoch              0.8436804413795471
+     test_precision_head_2_epoch              0.9665971994400024
+     test_precision_head_3_epoch              0.9725000858306885
+     test_precision_head_4_epoch              0.9733333587646484
+     test_precision_head_5_epoch              0.9734721779823303
+     test_precision_head_6_epoch              0.9737498760223389
+     test_precision_head_7_epoch              0.9737498760223389
+     test_precision_head_8_epoch              0.9737498760223389
+     test_precision_head_9_epoch              0.9737498760223389
+  test_precision_midpoint_10_epoch            0.9709025025367737
+   test_precision_midpoint_1_epoch            0.8204163908958435
+   test_precision_midpoint_2_epoch            0.9294439554214478
+   test_precision_midpoint_3_epoch            0.9470828175544739
+   test_precision_midpoint_4_epoch            0.9549996852874756
+   test_precision_midpoint_5_epoch            0.9588190913200378
+   test_precision_midpoint_6_epoch            0.9612498879432678
+   test_precision_midpoint_7_epoch            0.9635417461395264
+   test_precision_midpoint_8_epoch            0.9663886427879333
+   test_precision_midpoint_9_epoch            0.9706246852874756
+     test_precision_tip_10_epoch              0.9586803317070007
+     test_precision_tip_1_epoch                0.501596987247467
+     test_precision_tip_2_epoch               0.8241665959358215
+     test_precision_tip_3_epoch               0.9020135402679443
+     test_precision_tip_4_epoch               0.9325689673423767
+     test_precision_tip_5_epoch               0.9436798095703125
+     test_precision_tip_6_epoch               0.9491661787033081
+     test_precision_tip_7_epoch                 0.9521524310112
+     test_precision_tip_8_epoch               0.9548607468605042
+     test_precision_tip_9_epoch               0.9569442868232727
+     test_recall_angle_10_epoch                0.959017813205719
+      test_recall_angle_1_epoch               0.7819004058837891
+      test_recall_angle_2_epoch               0.8985762596130371
+      test_recall_angle_3_epoch               0.9282640814781189
+      test_recall_angle_4_epoch               0.9409626126289368
+      test_recall_angle_5_epoch               0.9449011087417603
+      test_recall_angle_6_epoch               0.9491370916366577
+      test_recall_angle_7_epoch               0.9527083039283752
+      test_recall_angle_8_epoch               0.9546824097633362
+      test_recall_angle_9_epoch               0.9570237398147583
+      test_recall_head_10_epoch               0.9679465889930725
+      test_recall_head_1_epoch                0.8383778929710388
+      test_recall_head_2_epoch                0.9608531594276428
+      test_recall_head_3_epoch                0.9667362570762634
+      test_recall_head_4_epoch                 0.967549741268158
+      test_recall_head_5_epoch                0.9676886200904846
+      test_recall_head_6_epoch                0.9679465889930725
+      test_recall_head_7_epoch                0.9679465889930725
+      test_recall_head_8_epoch                0.9679465889930725
+      test_recall_head_9_epoch                0.9679465889930725
+    test_recall_midpoint_10_epoch             0.9652101397514343
+    test_recall_midpoint_1_epoch              0.8154551386833191
+    test_recall_midpoint_2_epoch              0.9237186908721924
+    test_recall_midpoint_3_epoch              0.9412437081336975
+    test_recall_midpoint_4_epoch              0.9491405487060547
+    test_recall_midpoint_5_epoch               0.953029453754425
+    test_recall_midpoint_6_epoch              0.9554603099822998
+    test_recall_midpoint_7_epoch              0.9578494429588318
+    test_recall_midpoint_8_epoch               0.960696280002594
+    test_recall_midpoint_9_epoch               0.964932382106781
+      test_recall_tip_10_epoch                0.9528907537460327
+       test_recall_tip_1_epoch                0.49782222509384155
+       test_recall_tip_2_epoch                0.8186894059181213
+       test_recall_tip_3_epoch                 0.896308183670044
+       test_recall_tip_4_epoch                0.9268089532852173
+       test_recall_tip_5_epoch                0.9378603100776672
+       test_recall_tip_6_epoch                0.9433269500732422
+       test_recall_tip_7_epoch                0.9463132619857788
+       test_recall_tip_8_epoch                0.9490910768508911
+       test_recall_tip_9_epoch                0.9511547088623047
