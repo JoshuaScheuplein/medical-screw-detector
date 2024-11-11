@@ -16,14 +16,16 @@ def cluster_dataset_split():
                'Knee08', 'Knee09', 'Leg01', 'Spine01', 'Spine02', 'Spine03', 'Spine04', 'Spine05', 'Wrist01', 'Wrist02',
                'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07', ]
 
-    VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ]
+    VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Original code
+    # 'Ankle22' yields NaN values ...
+    VALV1 = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Adapted code
     
     # TESTV1 = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10', ] # Original code
     
     # 'Ankle18' and 'Ankle19' yield NaN values ...
-    # TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
+    TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
-    TESTV1 = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Adapted code
+    TESTV1 = VALV1 + TESTV1 # Adapted code
 
     print(f"Volumes for training: {TRAINV1}")
     print(f"Volumes for validation: {VALV1}")
