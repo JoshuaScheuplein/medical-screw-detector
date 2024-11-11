@@ -277,23 +277,18 @@ def main(args):
 
     if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
         args.checkpoint_file = last_ckpt_file
-        if print_flag:
-            print(f"Resume training from checkpoint '{args.checkpoint_file}'\n")
+        print(f"Resume training from checkpoint '{args.checkpoint_file}'\n")
     elif args.checkpoint_file is not None:
-        if print_flag:
-            print(f"Resume training from manually specified checkpoint '{args.checkpoint_file}'\n")
+        print(f"Resume training from manually specified checkpoint '{args.checkpoint_file}'\n")
     else:
-        if print_flag:
-            print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+        print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
     
     # last_ckpt_file = os.path.join(checkpoint_dir, "backup_checkpoint.ckpt")
     # if (args.checkpoint_file is None) and (os.path.isfile(last_ckpt_file)):
-    #     if print_flag:
-    #         print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
+    #     print(f"Resume training from checkpoint '{last_ckpt_file}'\n")
     #     args.checkpoint_file = last_ckpt_file
     # else:
-    #     if print_flag:
-    #         print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
+    #     print(f"Starting a complete new training run WITHOUT any pretrained model checkpoint ...\n")
 
     trainer.fit(model=detr_model,
                 train_dataloaders=data_loader_train,
