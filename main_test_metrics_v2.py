@@ -158,6 +158,7 @@ def main(args):
 
     trainer = Trainer(devices=1,
                       num_nodes=1,
+                      default_root_dir=args.result_dir,
                       enable_progress_bar=True, # Additionally added
                       plugins=plugins,
                       detect_anomaly=True # Additionally added
