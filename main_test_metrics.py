@@ -159,7 +159,9 @@ def main(args):
     trainer = Trainer(devices=1,
                       num_nodes=1,
                       enable_progress_bar=True, # Additionally added
-                      plugins=plugins)
+                      plugins=plugins,
+                      detect_anomaly=True # Additionally added
+                      )
 
     assert os.path.isfile(args.checkpoint_file), "Could not find model checkpoint!"
     print(f"\nTestset evaluation for checkpoint '{args.checkpoint_file}'\n")
