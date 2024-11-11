@@ -22,7 +22,7 @@ unset SLURM_EXPORT_ENV        # Enable export of environment from this script to
 
 BACKBONE_CHECKPOINT="$HPCVAULT/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth"
 
-DETR_CHECKPOINT="$HOME/Screw-Detection-Results/Job-924402/Checkpoints/backup_checkpoint.ckpt"
+# DETR_CHECKPOINT="$HOME/Screw-Detection-Results/Job-924402/Checkpoints/backup_checkpoint.ckpt"
 
 SRC_DIR="$HOME/medical-screw-detector"
 
@@ -87,21 +87,19 @@ git log --oneline -n 1
 echo -e "\nTraining started at $(date)"
 
 # Note: Default batch size = 6
-# --job_ID "$SLURM_JOB_ID" \
-# --result_dir "$RESULTS_DIR" \
+# --checkpoint_file "$DETR_CHECKPOINT" \
 srun python3 main.py \
-  --job_ID "924402" \
+  --job_ID "$SLURM_JOB_ID" \
   --data_dir "$FAST_DATA_DIR/V1-1to3objects-400projections-circular" \
-  --result_dir "$HOME/Screw-Detection-Results/Job-924402" \
+  --result_dir "$RESULTS_DIR" \
   --backbone "medical_resnet50" \
   --backbone_checkpoint_file "$BACKBONE_CHECKPOINT" \
-  --checkpoint_file "$DETR_CHECKPOINT" \
   --dataset_reduction 2 \
   --log_wandb \
   --lr 0.00004 \
   --lr_drop_epochs 40 \
   --lr_backbone 0.000004 \
-  --batch_size 2 \
+  --batch_size 6 \
   --epochs 50 \
   --with_box_refine \
   --two_stage \
