@@ -191,5 +191,15 @@ srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3
 
 # 037_ViT-S-16 with Job-ID 924404
 """
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404 --backbone "medical_vit_s_16" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_small_DINO_Training_Job_037_ViT-S-16_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 2 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
+srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404 --backbone "medical_vit_s_16" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_small_DINO_Training_Job_037_ViT-S-16_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
+"""
+
+# 040_ResNet18 with Job-ID 926383
+"""
+srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926383 --backbone "medical_resnet18" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet18_DINO_Training_Job_040_ResNet18_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926383/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 2 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
+"""
+
+# 041_ViT-T-16 with Job-ID 926385
+"""
+srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926385 --backbone "medical_vit_t_16" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_tiny_DINO_Training_Job_041_ViT-T-16_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926385/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
 """
