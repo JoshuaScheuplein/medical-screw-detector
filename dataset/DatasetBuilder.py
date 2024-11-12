@@ -16,7 +16,7 @@ def cluster_dataset_split():
                'Knee08', 'Knee09', 'Leg01', 'Spine01', 'Spine02', 'Spine03', 'Spine04', 'Spine05', 'Wrist01', 'Wrist02',
                'Wrist03', 'Wrist04', 'Wrist05', 'Wrist06', 'Wrist07', ]
 
-    ALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Original code
+    VALV1 = ['Ankle21', 'Ankle22', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Original code
     # 'Ankle22' yields NaN values ...
     # VALV1 = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', ] # Adapted code
     
