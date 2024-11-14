@@ -22,7 +22,7 @@ unset SLURM_EXPORT_ENV        # Enable export of environment from this script to
 
 BACKBONE_CHECKPOINT="$HPCVAULT/DINO-Checkpoints/checkpoint_resnet18_DINO_Training_Job_040_ResNet18_0200.pth"
 
-DETR_CHECKPOINT="$HOME/Screw-Detection-Results/Job-929123/Checkpoints/backup_checkpoint_epoch=22.ckpt"
+DETR_CHECKPOINT="$HOME/Screw-Detection-Results/Job-929123/Checkpoints/backup_checkpoint_epoch=40.ckpt"
 
 SRC_DIR="$HOME/medical-screw-detector"
 
