@@ -14,6 +14,26 @@ from pytorch_lightning.loggers import CSVLogger
 from pytorch_lightning.plugins.environments import SLURMEnvironment
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning import Callback # Additionall added
+from pytorch_lightning.utilities.rank_zero import rank_zero_only # Additionally added
+
+#######################################################################################
+try:
+    import MultiScaleDeformableAttention as MSDA
+    print("\n'MultiScaleDeformableAttention' is located at:", MSDA.__file__)
+except Exception as e:
+    print("\nFailed to import 'MultiScaleDeformableAttention' in main_azure.py")
+    print(e)
+#######################################################################################
+
+#######################################################################################
+# Additionally added PYTHONPATH since main_azure.py is located in folder 'models'
+import sys
+print("\nPYTHONPATH 1 in main_azure_test_metrics.py:", sys.path)
+path = os.path.dirname(os.path.dirname(__file__))
+print("Adding path to PYTHONPATH:", path)
+sys.path.append(path)
+print("PYTHONPATH 2 in main_azure_test_metrics.py:", sys.path)
+#######################################################################################
 
 from torch.utils.data import DataLoader
 from dataset.DatasetBuilder import build_dataset, custom_collate_fn
@@ -24,6 +44,8 @@ from lightning_copy.prediction_logging_callback import PredictionLoggingCallback
 from lightning_copy.detr_model import DeformableDETRLightning                       # Adapted code
 
 from utils.custom_arg_parser import get_args_parser
+
+print("\nSuccessfully imported all required packages!")
 
 ###############################################################
 import logging
@@ -49,11 +71,13 @@ class EpochLoggingCallback(Callback):
         return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:03}"
 
     # Training Epoch Timing
+    @rank_zero_only # Additionally added
     def on_train_epoch_start(self, trainer, pl_module):
         self.train_epoch_start_time = time.time()
         progress_logger.info(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
         # print(f"\nStarting training epoch {trainer.current_epoch + 1} ...")
 
+    @rank_zero_only # Additionally added
     def on_train_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.train_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -61,19 +85,23 @@ class EpochLoggingCallback(Callback):
         # print(f"Training epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Training Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_train_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Training batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Validation Epoch Timing
+    @rank_zero_only # Additionally added
     def on_validation_epoch_start(self, trainer, pl_module):
         self.val_epoch_start_time = time.time()
         progress_logger.info(f"Starting validation epoch {trainer.current_epoch + 1} ...")
         # print(f"Starting validation epoch {trainer.current_epoch + 1}...")
 
+    @rank_zero_only # Additionally added
     def on_validation_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.val_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -81,19 +109,23 @@ class EpochLoggingCallback(Callback):
         # print(f"Validation epoch {trainer.current_epoch + 1} completed in {readable_time}")
 
     # Validation Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_validation_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_validation_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Validation batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
 
     # Test Epoch Timing
+    @rank_zero_only # Additionally added
     def on_test_epoch_start(self, trainer, pl_module):
         self.test_epoch_start_time = time.time()
         progress_logger.info("\nStarting test epoch ...")
         # print("\nStarting test epoch...")
 
+    @rank_zero_only # Additionally added
     def on_test_epoch_end(self, trainer, pl_module):
         elapsed_time = time.time() - self.test_epoch_start_time
         readable_time = self.format_time(elapsed_time)
@@ -101,9 +133,11 @@ class EpochLoggingCallback(Callback):
         # print(f"Test epoch completed in {readable_time}")
 
     # Test Batch Timing
+    # @rank_zero_only # Additionally added
     # def on_test_batch_start(self, trainer, pl_module, batch, batch_idx):
     #     self.batch_start_time = time.time()
 
+    # @rank_zero_only # Additionally added
     # def on_test_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
     #     batch_elapsed = time.time() - self.batch_start_time
     #     print(f"Test batch {batch_idx + 1} took {self.format_time(batch_elapsed)}")
@@ -150,17 +184,27 @@ def main(args):
 
     detr_model = DeformableDETRLightning(args)
 
-    if os.name == 'nt':
-        plugins = []
-    else:
-        print("\nUsing SLURM environment plugin!")
-        plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
+    # if os.name == 'nt':
+    #     plugins = []
+    # else:
+    #     print("\nUsing SLURM environment plugin!")
+    #     plugins = [SLURMEnvironment(requeue_signal=signal.SIGUSR1)]
 
-    trainer = Trainer(devices=1,
-                      num_nodes=1,
+    trainer = Trainer(#####################################################################################
+                      # Adapted for multi-GPU training
+                      #####################################################################################
+                      accelerator="gpu", # Enable GPU acceleration
+                      # strategy= "ddp",
+                      # RuntimeError: It looks like your LightningModule has parameters that were not used in producing the loss returned by training_step.
+                      strategy="ddp_find_unused_parameters_true", # Distributed Data Parallel strategy
+                      use_distributed_sampler=True,
+                      devices=args.num_gpus,
+                      num_nodes=args.num_nodes,
+                      sync_batchnorm=True,
+                      #####################################################################################
                       default_root_dir=args.result_dir,
                       enable_progress_bar=True, # Additionally added
-                      plugins=plugins,
+                      # plugins=plugins, # We do not need any plugins on Azure
                       detect_anomaly=True, # Additionally added
                       )
 
@@ -182,35 +226,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     main(args)
-
-
-
-# 040_ResNet18 with Job-ID 926383
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926383 --backbone "medical_resnet18" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet18_DINO_Training_Job_040_ResNet18_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926383/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 2 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
-
-# 040_ResNet18 with Job-ID 929123
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-929123 --backbone "medical_resnet18" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet18_DINO_Training_Job_040_ResNet18_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-929123/Checkpoints/backup_checkpoint_epoch=49.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
-
-# 036_ResNet50 with Job-ID 924402
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924402 --backbone "medical_resnet50" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924402/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 2 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
-
-# 036_ResNet50 with Job-ID 928519
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-928519 --backbone "medical_resnet50" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_resnet50_DINO_Training_Job_036_ResNet50_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-928519/Checkpoints/backup_checkpoint_epoch=49.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
-
-# 041_ViT-T-16 with Job-ID 926385
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926385 --backbone "medical_vit_t_16" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_tiny_DINO_Training_Job_041_ViT-T-16_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-926385/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
-
-# 037_ViT-S-16 with Job-ID 924404
-"""
-srun python main_test_metrics_v2.py --data_dir /home/vault/iwi5/iwi5165h/V1-1to3objects-400projections-circular --result_dir /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404 --backbone "medical_vit_s_16" --backbone_checkpoint_file /home/vault/iwi5/iwi5165h/DINO-Checkpoints/checkpoint_vit_small_DINO_Training_Job_037_ViT-S-16_0200.pth --checkpoint_file /home/hpc/iwi5/iwi5165h/Screw-Detection-Results/Job-924404/Checkpoints/backup_checkpoint.ckpt --dataset_reduction 2 --lr 0.00004 --lr_drop_epochs 40 --lr_backbone 0.000004 --batch_size 6 --epochs 50 --with_box_refine --two_stage --eff_query_init --eff_specific_head --rho 0.1 --use_enc_aux_loss --num_queries 300 --num_workers 10
-"""
