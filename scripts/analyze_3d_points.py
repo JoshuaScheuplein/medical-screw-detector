@@ -285,6 +285,6 @@ if __name__ == '__main__':
     print(f"full test dataset avg angle deviation: {overall_avg_angle_deviation / overall_screws:.3f}°")
     print(f"full test dataset avg cardinality deviation: {int(overall_avg_cardinality / overall_screws)}")
 
-    print(f"\nNumber of total screws =", total_screws)
+    print(f"\nNumber of total screws =", overall_screws)
 
     print(f"\ndone ({s+1}/{len(samples)})\n")
