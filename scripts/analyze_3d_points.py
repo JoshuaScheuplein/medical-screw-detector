@@ -279,12 +279,8 @@ if __name__ == '__main__':
         print(f"tips_list = {tips_list}")
 
     print(f"--------------------------------------------------------------------------------------")
-    print(
-        f"full test dataset avg loss head: {overall_avg_loss_distance_head_mm / overall_screws:.3f}mm")
+    print(f"full test dataset avg loss head: {overall_avg_loss_distance_head_mm / overall_screws:.3f}mm")
     print(f"full test dataset avg loss tip: {overall_avg_loss_distance_tip_mm / overall_screws:.3f}mm")
     print(f"full test dataset avg angle deviation: {overall_avg_angle_deviation / overall_screws:.3f}°")
     print(f"full test dataset avg cardinality deviation: {int(overall_avg_cardinality / overall_screws)}")
-
-    print(f"\nNumber of total screws =", overall_screws)
-
-    print(f"\ndone ({s+1}/{len(samples)})\n")
+    print(f"done ({s+1}/{len(samples)})\n")
