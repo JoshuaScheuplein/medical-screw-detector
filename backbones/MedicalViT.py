@@ -11,6 +11,10 @@ import torchvision.transforms as T
 from torchvision import models
 
 import backbones.vision_transformer as vits
+###############################################
+# import backbones.vision_transformer as vits
+import backbones.vision_transformer_dax as vits
+###############################################
 from backbones.BaseBackbone import BaseBackbone
 
 
