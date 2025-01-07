@@ -161,7 +161,20 @@ if __name__ == '__main__':
     detector_shape, pixel_size = (976, 976), 0.305
 
     # loop over folders and convert each set of tool volumes to landmarks
-    samples = [f for f in os.listdir(datadir_p) if os.path.isdir(datadir_p / f)]
+    ##############################################################################################
+    # samples = [f for f in os.listdir(datadir_p) if os.path.isdir(datadir_p / f)] # Original code
+    
+    evaluation_set = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10']
+    samples = []
+    for sample in evaluation_set:
+        if os.path.isdir(datadir_p / (sample + "_le_512x512x512_1")):
+            samples.append(sample + "_le_512x512x512_1")
+        if os.path.isdir(datadir_p / (sample + "_le_512x512x512_2")):
+            samples.append(sample + "_le_512x512x512_2")
+        if os.path.isdir(datadir_p / (sample + "_le_512x512x512_3")):
+            samples.append(sample + "_le_512x512x512_3")
+    ##############################################################################################
+
     print(f"processing {len(samples)} samples:")
 
     overall_avg_loss_distance_head_mm = 0
@@ -186,12 +199,23 @@ if __name__ == '__main__':
         tips_list = []
 
         # debug plot
-        if (folder_b / "labels.json").exists() and (folder_p / "predictions_test_50.json").exists():
+        # if (folder_b / "labels.json").exists() and (folder_p / "predictions_test_50.json").exists(): # Original code
+
+        # if (folder_b / "labels.json").exists() and ((folder_p / "predictions_test_50.json").exists() or (folder_p / "predictions_val_49.json").exists()): # Adapted code
+        if (folder_b / "labels.json").exists() and ((folder_p / "predictions_test_50.json").exists() or (folder_p / "predictions_val_48.json").exists()): # Adapted code
 
             # read projections
-            print(f"computing 3D loss for {folder_b}")
+            print(f"\ncomputing 3D loss for '{folder_b}' ...")
             tgt = json.load(open(folder_b / "labels.json"))
-            pred = json.load(open(folder_p / "predictions_test_50.json"))
+
+            # pred = json.load(open(folder_p / "predictions_test_50.json")) # Original code
+
+            # Adapted code
+            if (folder_p / "predictions_test_50.json").exists():
+                pred = json.load(open(folder_p / "predictions_test_50.json"))
+            else:
+                # pred = json.load(open(folder_p / "predictions_val_49.json"))
+                pred = json.load(open(folder_p / "predictions_val_48.json"))
 
             views = []
 
