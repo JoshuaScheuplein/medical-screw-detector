@@ -25,7 +25,7 @@ def cluster_dataset_split():
     # TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
     ######################################
-    # TESTV1 = VALV1 + TESTV1 # Adapted code
+    TESTV1 = VALV1 + TESTV1 # Adapted code
     ######################################
 
     print(f"Volumes for training: {TRAINV1}")
@@ -178,10 +178,13 @@ def build_dataset(image_set, args):
 
     if image_set == 'train':
         volumes = training_volumes
+
     elif image_set == 'val':
         volumes = validation_volumes
+
     elif image_set == 'test':
         volumes = testing_volumes
+
         composed_transform = V1Compose([
             V1RandomFlip(horizontal=True, p=0.),
             V1RandomFlip(horizontal=False, p=0.),

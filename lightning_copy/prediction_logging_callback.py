@@ -83,53 +83,112 @@ class PredictionLoggingCallback(Callback):
             with open(prediction_file_path, 'w') as fp:
                 json.dump(self.labels_list[volume_idx], fp=fp, indent=4)
 
+    """ Original Code """
+
+    # def write_result(self, data_loader, inputs, outputs):
+    #     _, target, indices = inputs
+    #     index = indices[0]
+
+    #     target_0 = target[0]
+
+    #     coords_tgt = target_0["screws"]
+
+    #     rotation = target_0["rotation"] if "rotation" in target_0 else 0
+    #     crop_region = target_0["crop_region"] if "crop_region" in target_0 else [0, 0, 976, 976]
+    #     v_flip = target_0["v_flip"] if "v_flip" in target_0 else False
+    #     h_flip = target_0["h_flip"] if "h_flip" in target_0 else False
+
+    #     coords_pred = outputs["prediction"]["pred_screws"][0]
+    #     logits_pred = outputs["prediction"]["pred_logits"][0]
+
+    #     volume_idx = index // data_loader.dataset.images_per_volume
+    #     view_idx = index % data_loader.dataset.images_per_volume
+
+    #     labels: dict = self.labels_list[volume_idx]
+
+    #     labels["landmarks2d"][f"view_{view_idx}"] = {
+    #         "rotation": rotation,
+    #         "crop_region": crop_region,
+    #         "v_flip": v_flip,
+    #         "h_flip": h_flip,
+    #         "predictions": {},
+    #         "targets": {}
+    #     }
+
+    #     for object_idx in range(len(coords_pred)):
+    #         head = coords_pred[object_idx, :2].tolist()
+    #         tip = coords_pred[object_idx, 2:].tolist()
+
+    #         class_logits = logits_pred[object_idx].item()
+    #         if class_logits > 0.:
+    #             labels["landmarks2d"][f"view_{view_idx}"]["predictions"][f"object_{object_idx}"] = {
+    #                 "head": head,
+    #                 "tip": tip,
+    #                 "screw_prob": class_logits
+    #             }
+
+    #     for object_idx in range(len(coords_tgt)):
+    #         head = coords_tgt[object_idx, :2].tolist()
+    #         tip = coords_tgt[object_idx, 2:].tolist()
+
+    #         labels["landmarks2d"][f"view_{view_idx}"]["targets"][f"object_{object_idx}"] = {
+    #             "head": head,
+    #             "tip": tip
+    #         }
+
+    """ Adapted Code """
+
     def write_result(self, data_loader, inputs, outputs):
+
         _, target, indices = inputs
-        index = indices[0]
 
-        target_0 = target[0]
+        for n in range(len(indices)):   # This for loop was not contained in the original implementation ...
 
-        coords_tgt = target_0["screws"]
+            index = indices[n]          # Original code: indices[0]
 
-        rotation = target_0["rotation"] if "rotation" in target_0 else 0
-        crop_region = target_0["crop_region"] if "crop_region" in target_0 else [0, 0, 976, 976]
-        v_flip = target_0["v_flip"] if "v_flip" in target_0 else False
-        h_flip = target_0["h_flip"] if "h_flip" in target_0 else False
+            target_0 = target[n]        # Original code: target[0]
 
-        coords_pred = outputs["prediction"]["pred_screws"][0]
-        logits_pred = outputs["prediction"]["pred_logits"][0]
+            coords_tgt = target_0["screws"]
 
-        volume_idx = index // data_loader.dataset.images_per_volume
-        view_idx = index % data_loader.dataset.images_per_volume
+            rotation = target_0["rotation"] if "rotation" in target_0 else 0
+            crop_region = target_0["crop_region"] if "crop_region" in target_0 else [0, 0, 976, 976]
+            v_flip = target_0["v_flip"] if "v_flip" in target_0 else False
+            h_flip = target_0["h_flip"] if "h_flip" in target_0 else False
 
-        labels: dict = self.labels_list[volume_idx]
+            coords_pred = outputs["prediction"]["pred_screws"][0]
+            logits_pred = outputs["prediction"]["pred_logits"][0]
 
-        labels["landmarks2d"][f"view_{view_idx}"] = {
-            "rotation": rotation,
-            "crop_region": crop_region,
-            "v_flip": v_flip,
-            "h_flip": h_flip,
-            "predictions": {},
-            "targets": {}
-        }
+            volume_idx = index // data_loader.dataset.images_per_volume
+            view_idx = index % data_loader.dataset.images_per_volume
 
-        for object_idx in range(len(coords_pred)):
-            head = coords_pred[object_idx, :2].tolist()
-            tip = coords_pred[object_idx, 2:].tolist()
+            labels: dict = self.labels_list[volume_idx]
 
-            class_logits = logits_pred[object_idx].item()
-            if class_logits > 0.:
-                labels["landmarks2d"][f"view_{view_idx}"]["predictions"][f"object_{object_idx}"] = {
-                    "head": head,
-                    "tip": tip,
-                    "screw_prob": class_logits
-                }
-
-        for object_idx in range(len(coords_tgt)):
-            head = coords_tgt[object_idx, :2].tolist()
-            tip = coords_tgt[object_idx, 2:].tolist()
-
-            labels["landmarks2d"][f"view_{view_idx}"]["targets"][f"object_{object_idx}"] = {
-                "head": head,
-                "tip": tip
+            labels["landmarks2d"][f"view_{view_idx}"] = {
+                "rotation": rotation,
+                "crop_region": crop_region,
+                "v_flip": v_flip,
+                "h_flip": h_flip,
+                "predictions": {},
+                "targets": {}
             }
+
+            for object_idx in range(len(coords_pred)):
+                head = coords_pred[object_idx, :2].tolist()
+                tip = coords_pred[object_idx, 2:].tolist()
+
+                class_logits = logits_pred[object_idx].item()
+                if class_logits > 0.:
+                    labels["landmarks2d"][f"view_{view_idx}"]["predictions"][f"object_{object_idx}"] = {
+                        "head": head,
+                        "tip": tip,
+                        "screw_prob": class_logits
+                    }
+
+            for object_idx in range(len(coords_tgt)):
+                head = coords_tgt[object_idx, :2].tolist()
+                tip = coords_tgt[object_idx, 2:].tolist()
+
+                labels["landmarks2d"][f"view_{view_idx}"]["targets"][f"object_{object_idx}"] = {
+                    "head": head,
+                    "tip": tip
+                }

@@ -12,6 +12,7 @@ from matplotlib.colors import TABLEAU_COLORS
 
 colors = list(TABLEAU_COLORS.values())
 
+
 def neglog_normalize(_img):
     assert _img.ndim == 2
     if np.all(_img == 0):
@@ -33,6 +34,7 @@ def neglog_normalize(_img):
     _img = (np.clip(_img * 255, 0, 255)).astype(np.uint8)
     return _img
 
+
 def main(image_dir, prediction_dir, same_color=False):
 
     datadir_b = image_dir
@@ -50,6 +52,7 @@ def main(image_dir, prediction_dir, same_color=False):
         # debug plot
         # if (folder_b / "projections.tiff").exists() and (folder_p / "predictions_test_48.json").exists(): # Original code
         if (folder_b / "projections.tiff").exists(): # Adapted code
+
             result_dir = folder_p / "Visualization-Results"
             result_dir.mkdir(parents=False, exist_ok=True)
 
@@ -111,18 +114,25 @@ def main(image_dir, prediction_dir, same_color=False):
                     #     color = 'red' if same_color else colors[i % len(colors)]
                     #     plot_screw(head_x, head_y, tip_x, tip_y, color=color)
 
-                    plt.tight_layout()
                     plt.axis('off') # Additionally added
-                    fig.savefig(result_dir / f'prediction_preview_view_{j}_epoch_{epoch_num}.png')
+                    plt.tight_layout()
+                    fig.savefig(result_dir / f'prediction_preview_view_{j}_epoch_{epoch_num}.png',
+                                bbox_inches='tight', pad_inches=0, dpi=200 # Additionally added
+                                )
                     plt.close(fig)
 
         print(f"done ({s+1}/{len(samples)})\n")
 
 
 def plot_screw(p0_x, p0_y, p1_x, p1_y, color):
-    plt.plot([p0_x], [p0_y], 'o', c=color,  markersize=15, markeredgewidth=4, alpha=0.7)
-    plt.plot([p1_x], [p1_y], 'x', c=color,  markersize=15, markeredgewidth=4, alpha=0.7)
-    plt.plot([p0_x, p1_x], [p0_y, p1_y], '--', c=color, linewidth=4, alpha=0.7)
+
+    # plt.plot([p0_x], [p0_y], 'o', c=color, markersize=15, markeredgewidth=4, alpha=0.7)
+    # plt.plot([p1_x], [p1_y], 'x', c=color, markersize=15, markeredgewidth=4, alpha=0.7)
+    # plt.plot([p0_x, p1_x], [p0_y, p1_y], '--', c=color, linewidth=4, alpha=0.7)
+
+    plt.plot([p0_x], [p0_y], 'o', c=color, markersize=15, markeredgewidth=4, alpha=1.0)
+    plt.plot([p1_x], [p1_y], 'x', c=color, markersize=15, markeredgewidth=4, alpha=1.0)
+    plt.plot([p0_x, p1_x], [p0_y, p1_y], '--', c=color, linewidth=4, alpha=1.0)
 
 
 if __name__ == '__main__':
