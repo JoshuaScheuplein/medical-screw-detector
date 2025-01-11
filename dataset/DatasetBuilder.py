@@ -25,7 +25,7 @@ def cluster_dataset_split():
     # TESTV1 = ['Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
     ######################################
-    TESTV1 = VALV1 + TESTV1 # Adapted code
+    # TESTV1 = VALV1 + TESTV1 # Adapted code
     ######################################
 
     print(f"Volumes for training: {TRAINV1}")

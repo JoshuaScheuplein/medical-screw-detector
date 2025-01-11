@@ -31,9 +31,10 @@ def main(image_dir, prediction_dir, same_color=False):
 
         # debug plot
         # if (folder_b / "projections.tiff").exists() and (folder_p / "predictions_test_48.json").exists(): # Original code
-        if (folder_b / "projections.tiff").exists(): # Adapted code
+        if (folder_b / "projections.tiff").exists() and ((folder_p / "predictions_test_50.json").exists() or (folder_p / "predictions_val_49.json").exists()):
+        # if (folder_b / "projections.tiff").exists(): # Adapted code
 
-            result_dir = folder_p / "results"
+            result_dir = folder_p / "Visualization-Results"
             result_dir.mkdir(parents=False, exist_ok=True)
 
             # read projections
