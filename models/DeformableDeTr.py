@@ -322,6 +322,14 @@ def build_detr(args):
     if args.rho:
         losses += ["mask_prediction"]
 
+    ####################################################################################
+    # Just for debugging and inspection ...
+    print("#######################################")
+    print("\nWEIGHT DICT:")
+    print(weight_dict)
+    print("#######################################")
+    ####################################################################################
+
     # num_classes, matcher, weight_dict, losses, focal_alpha=0.25
     criterion = SetCriterion(ScrewEnum.NA, matcher, weight_dict, losses, args)
     criterion.to(device)
