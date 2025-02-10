@@ -179,15 +179,33 @@ def compute_metrics(results_dir: Path):
                 diff += np.abs(num_predictions - num_targets)
                 num_screws += num_targets
 
-                # if num_predictions > num_targets:
-                #     true_positives += 
-
-
+                if num_predictions > num_targets:
+                    true_positives += num_targets
+                    false_positives += num_predictions - num_targets
+                elif num_targets > num_predictions:
+                    true_positives += num_predictions
+                    false_negatives += num_targets - num_predictions
+                else:
+                    assert num_predictions == num_targets
+                    true_positives += num_predictions
 
     print("\n#####################################################")
     print(f"Difference = {diff}")
     print(f"Number of screws = {num_screws}")
     print(f"Average Cardinality = {diff / num_screws}")
+
+    print(f"\nTrue Positives = {true_positives}")
+    print(f"False Positives = {false_positives}")
+    print(f"False Negatives = {false_negatives}")
+    
+    precision = true_positives / (true_positives + false_positives)
+    recall = true_positives / (true_positives + false_negatives)
+    f1_score = 2 * (precision * recall) / (precision + recall)
+    
+    print(f"\nPrecision = {precision}")
+    print(f"Recall = {recall}")
+    print(f"F1-Score = {f1_score}")
+
     return
 
 
