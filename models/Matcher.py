@@ -46,6 +46,16 @@ class HungarianMatcher(nn.Module):
         self.cost_screw_head_tip = cost_screw_head_tip
         assert cost_class != 0 or cost_screw_mid != 0 or cost_screw_head_tip != 0, "all costs cant be 0"
 
+        ####################################################################################
+        # Just for debugging and inspection ...
+        print("#######################################")
+        print("\nMATCHER:")
+        print(f"cost_class = {self.cost_class}")
+        print(f"cost_screw_mid = {self.cost_screw_mid}")
+        print(f"cost_screw_head_tip = {self.cost_screw_head_tip}")
+        print("#######################################")
+        ####################################################################################
+
     def forward(self, outputs, targets):
         """ Performs the matching
 
