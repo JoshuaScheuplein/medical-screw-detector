@@ -48,12 +48,12 @@ class HungarianMatcher(nn.Module):
 
         ####################################################################################
         # Just for debugging and inspection ...
-        print("#######################################")
-        print("\nMATCHER:")
-        print(f"cost_class = {self.cost_class}")
-        print(f"cost_screw_mid = {self.cost_screw_mid}")
-        print(f"cost_screw_head_tip = {self.cost_screw_head_tip}")
-        print("#######################################")
+        # print("#######################################")
+        # print("\nMATCHER:")
+        # print(f"cost_class = {self.cost_class}")
+        # print(f"cost_screw_mid = {self.cost_screw_mid}")
+        # print(f"cost_screw_head_tip = {self.cost_screw_head_tip}")
+        # print("#######################################")
         ####################################################################################
 
     def forward(self, outputs, targets):
@@ -86,6 +86,17 @@ class HungarianMatcher(nn.Module):
             # Also concat the target labels and boxes
             tgt_ids = torch.cat([v["labels"] for v in targets])
             tgt_screws = torch.cat([v["screws"] for v in targets])
+
+            ####################################################################################
+            # Just for debugging and inspection ...
+            print("#######################################")
+            print("\nMATCHER:")
+            print(f"\ntgt_ids = {tgt_ids.shape}")
+            print(f"tgt_ids = {tgt_ids}")
+            print(f"\ntgt_screws = {tgt_screws.shape}")
+            print(f"tgt_screws = {tgt_screws}")
+            print("#######################################")
+            ####################################################################################
 
             # Compute the classification cost.
             gamma = 2.0

@@ -2,11 +2,17 @@
 ############################
 # Job-924402
 ############################
+
+# MATCHER: {cost_class = 5, cost_screw_mid = 0.976, cost_screw_head_tip = 9.76}
+
 # weight_dict = {'loss_ce': 5, 'loss_screw_head': 0.01, 'loss_screw_tip': 0.01, 'loss_screw_midpoint': 0.001, 'loss_ce_enc': 5, 'loss_screw_head_enc': 0.01, 'loss_screw_tip_enc': 0.01, 'loss_screw_midpoint_enc': 0.001, 'loss_ce_enc_0': 5, 'loss_screw_head_enc_0': 0.01, 'loss_screw_tip_enc_0': 0.01, 'loss_screw_midpoint_enc_0': 0.001, 'loss_ce_enc_1': 5, 'loss_screw_head_enc_1': 0.01, 'loss_screw_tip_enc_1': 0.01, 'loss_screw_midpoint_enc_1': 0.001, 'loss_ce_enc_2': 5, 'loss_screw_head_enc_2': 0.01, 'loss_screw_tip_enc_2': 0.01, 'loss_screw_midpoint_enc_2': 0.001, 'loss_ce_enc_3': 5, 'loss_screw_head_enc_3': 0.01, 'loss_screw_tip_enc_3': 0.01, 'loss_screw_midpoint_enc_3': 0.001, 'loss_ce_enc_4': 5, 'loss_screw_head_enc_4': 0.01, 'loss_screw_tip_enc_4': 0.01, 'loss_screw_midpoint_enc_4': 0.001, 'loss_ce_backbone': 5, 'loss_screw_head_backbone': 0.01, 'loss_screw_tip_backbone': 0.01, 'loss_screw_midpoint_backbone': 0.001, 'loss_mask_prediction': 1}
 
 ############################
 # Job-926383
 ############################
+
+# MATCHER: {cost_class = 5, cost_screw_mid = 0.976, cost_screw_head_tip = 9.76}
+
 # weight_dict = {'loss_ce': 5, 'loss_screw_head': 0.01, 'loss_screw_tip': 0.01, 'loss_screw_midpoint': 0.001, 'loss_ce_enc': 5, 'loss_screw_head_enc': 0.01, 'loss_screw_tip_enc': 0.01, 'loss_screw_midpoint_enc': 0.001, 'loss_ce_enc_0': 5, 'loss_screw_head_enc_0': 0.01, 'loss_screw_tip_enc_0': 0.01, 'loss_screw_midpoint_enc_0': 0.001, 'loss_ce_enc_1': 5, 'loss_screw_head_enc_1': 0.01, 'loss_screw_tip_enc_1': 0.01, 'loss_screw_midpoint_enc_1': 0.001, 'loss_ce_enc_2': 5, 'loss_screw_head_enc_2': 0.01, 'loss_screw_tip_enc_2': 0.01, 'loss_screw_midpoint_enc_2': 0.001, 'loss_ce_enc_3': 5, 'loss_screw_head_enc_3': 0.01, 'loss_screw_tip_enc_3': 0.01, 'loss_screw_midpoint_enc_3': 0.001, 'loss_ce_enc_4': 5, 'loss_screw_head_enc_4': 0.01, 'loss_screw_tip_enc_4': 0.01, 'loss_screw_midpoint_enc_4': 0.001, 'loss_ce_backbone': 5, 'loss_screw_head_backbone': 0.01, 'loss_screw_tip_backbone': 0.01, 'loss_screw_midpoint_backbone': 0.001, 'loss_mask_prediction': 1}
 
 """
@@ -47,18 +53,9 @@ class HungarianMatcher(nn.Module):
 
         assert cost_class != 0 or cost_screw_mid != 0 or cost_screw_head_tip != 0, "all costs cant be 0"
 
-        ####################################################################################
-        # Just for debugging and inspection ...
-        print("#######################################")
-        print("\nMATCHER:")
-        print(f"cost_class = {self.cost_class}")
-        print(f"cost_screw_mid = {self.cost_screw_mid}")
-        print(f"cost_screw_head_tip = {self.cost_screw_head_tip}")
-        print("#######################################")
-        ####################################################################################
-
     def forward(self, outputs, targets):
-        """ Performs the matching
+        """
+        Performs the matching
 
         Params:
             outputs: This is a dict that contains at least these entries:
