@@ -161,7 +161,7 @@ def compute_metrics(results_dir: Path):
 
         views = list(sample_data.keys())
         print(f"Found {len(views)} views in total for this sample: {views}")
-        for view in views():
+        for view in views:
             predictions, targets = sample_data[view]["predictions"], sample_data[view]["targets"]
             num_predictions, num_targets = len(predictions.keys()), len(targets.keys())
             print(f"{view}: num_predictions = {num_predictions} & num_targets = {num_targets}")
@@ -176,4 +176,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     compute_metrics(Path(args.results_dir))
-    
