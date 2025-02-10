@@ -152,7 +152,10 @@ def compute_metrics(results_dir: Path):
             print("\n#####################################################")
             print(f"Processing test sample '{sample}' ...")
 
-            file_path = results_dir / Path(sample) / "predictions_test_50.json"
+            if (results_dir / Path(sample) / "predictions_test_50.json").is_file():
+                file_path = results_dir / Path(sample) / "predictions_test_50.json"
+            else:
+                file_path = results_dir / Path(sample) / "predictions_val_49.json"
             assert file_path.is_file() == True, f"Missing prediction file for sample '{sample}' ..."
             with open(file_path, 'r') as f:
                 sample_data = json.load(f)
