@@ -139,9 +139,9 @@ from pathlib import Path
 import numpy as np
 
 
-scan_names = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10'] # Original code
+# scan_names = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10'] # Original code
 
-# scan_names = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
+scan_names = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
 
 def compute_metrics(results_dir: Path):
@@ -149,6 +149,7 @@ def compute_metrics(results_dir: Path):
     assert (results_dir.is_dir() == True) and (str(results_dir).split("/")[-1] == "V1-1to3objects-400projections-circular")
 
     diff, num_screws = 0, 0
+    true_positives, false_positives, false_negatives = 0, 0, 0
     for scan in scan_names:
         for item in ["_le_512x512x512_1", "_le_512x512x512_2", "_le_512x512x512_3"]:
             sample = scan + item
@@ -176,7 +177,12 @@ def compute_metrics(results_dir: Path):
 
                 # Update number missed objects and total number of screws
                 diff += np.abs(num_predictions - num_targets)
-                num_screws += num_predictions
+                num_screws += num_targets
+
+                # if num_predictions > num_targets:
+                #     true_positives += 
+
+
 
     print("\n#####################################################")
     print(f"Difference = {diff}")

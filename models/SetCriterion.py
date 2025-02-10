@@ -256,6 +256,46 @@ class SetCriterion(nn.Module):
         for i, _corr in enumerate(corr[1:]):
             losses[f"corr_mask_attn_map_dec_{i}"] = _corr.mean()
         return losses
+    
+
+    ##############################################################################################
+    ##############################################################################################
+    # +++ NEW METHOD: Compute overall detection metrics (i.e. Precision, Recall, F1-Score) +++
+    @torch.no_grad()
+    def compute_detection_metrics(self, outputs, targets, indices, num_screws):
+        """
+        Compute concrete detection metrics (precision, recall, and F1-score) over a batch.
+        We use the already computed Hungarian matching (indices) to count true positives (TP).
+        For predicted screws we take the argmax over pred_logits and count only predictions not equal
+        to the no-object category.
+        """
+        # Use the outputs without auxiliary heads for evaluation.
+        pred_logits = outputs['pred_logits']  # shape: [batch_size, num_queries, num_classes]
+        # Determine the predicted label for each query.
+        pred_labels = pred_logits.argmax(dim=-1)  # shape: [batch_size, num_queries]
+        total_predictions = (pred_labels != self.no_object_category).sum().item()
+
+        # Total ground truth count.
+        total_targets = sum(len(t["labels"]) for t in targets)
+
+        # True positives: each matched prediction from the Hungarian matching.
+        TP = sum(src.numel() for src, _ in indices)
+        FP = total_predictions - TP
+        FN = total_targets - TP
+
+        precision = TP / (TP + FP) if (TP + FP) > 0 else 0.0
+        recall = TP / (TP + FN) if (TP + FN) > 0 else 0.0
+        f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
+
+        metrics = {
+            "detection_precision": precision,
+            "detection_recall": recall,
+            "detection_f1": f1
+        }
+
+        return metrics
+    ##############################################################################################
+    ##############################################################################################
 
     def _get_src_permutation_idx(self, indices):
         # permute predictions following indices
@@ -306,6 +346,12 @@ class SetCriterion(nn.Module):
         for loss in self.losses:
             kwargs = {}
             losses.update(self.get_loss(loss, outputs, targets, indices, num_screws, **kwargs))
+
+        ##############################################################################################
+        ##############################################################################################
+
+        ##############################################################################################
+        ##############################################################################################
 
         # In case of auxiliary losses, we repeat this process with the output of each intermediate layer.
         if 'aux_outputs' in outputs:
