@@ -1,28 +1,27 @@
-# ------------------------------------------------------------------------------------
-# Sparse DETR
-# Copyright (c) 2021 KakaoBrain. All Rights Reserved.
-# Licensed under the Apache License, Version 2.0 [see LICENSE for details]
-# ------------------------------------------------------------------------------------
-# Modified from Deformable DETR (https://github.com/fundamentalvision/Deformable-DETR)
-# Copyright (c) 2020 SenseTime. All Rights Reserved.
-# ------------------------------------------------------------------------------------
-# Modified from DETR (https://github.com/facebookresearch/detr)
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-# ------------------------------------------------------------------------------------
 
+############################
+# Job-924402
+############################
+# weight_dict = {'loss_ce': 5, 'loss_screw_head': 0.01, 'loss_screw_tip': 0.01, 'loss_screw_midpoint': 0.001, 'loss_ce_enc': 5, 'loss_screw_head_enc': 0.01, 'loss_screw_tip_enc': 0.01, 'loss_screw_midpoint_enc': 0.001, 'loss_ce_enc_0': 5, 'loss_screw_head_enc_0': 0.01, 'loss_screw_tip_enc_0': 0.01, 'loss_screw_midpoint_enc_0': 0.001, 'loss_ce_enc_1': 5, 'loss_screw_head_enc_1': 0.01, 'loss_screw_tip_enc_1': 0.01, 'loss_screw_midpoint_enc_1': 0.001, 'loss_ce_enc_2': 5, 'loss_screw_head_enc_2': 0.01, 'loss_screw_tip_enc_2': 0.01, 'loss_screw_midpoint_enc_2': 0.001, 'loss_ce_enc_3': 5, 'loss_screw_head_enc_3': 0.01, 'loss_screw_tip_enc_3': 0.01, 'loss_screw_midpoint_enc_3': 0.001, 'loss_ce_enc_4': 5, 'loss_screw_head_enc_4': 0.01, 'loss_screw_tip_enc_4': 0.01, 'loss_screw_midpoint_enc_4': 0.001, 'loss_ce_backbone': 5, 'loss_screw_head_backbone': 0.01, 'loss_screw_tip_backbone': 0.01, 'loss_screw_midpoint_backbone': 0.001, 'loss_mask_prediction': 1}
+
+############################
+# Job-926383
+############################
+# weight_dict = {'loss_ce': 5, 'loss_screw_head': 0.01, 'loss_screw_tip': 0.01, 'loss_screw_midpoint': 0.001, 'loss_ce_enc': 5, 'loss_screw_head_enc': 0.01, 'loss_screw_tip_enc': 0.01, 'loss_screw_midpoint_enc': 0.001, 'loss_ce_enc_0': 5, 'loss_screw_head_enc_0': 0.01, 'loss_screw_tip_enc_0': 0.01, 'loss_screw_midpoint_enc_0': 0.001, 'loss_ce_enc_1': 5, 'loss_screw_head_enc_1': 0.01, 'loss_screw_tip_enc_1': 0.01, 'loss_screw_midpoint_enc_1': 0.001, 'loss_ce_enc_2': 5, 'loss_screw_head_enc_2': 0.01, 'loss_screw_tip_enc_2': 0.01, 'loss_screw_midpoint_enc_2': 0.001, 'loss_ce_enc_3': 5, 'loss_screw_head_enc_3': 0.01, 'loss_screw_tip_enc_3': 0.01, 'loss_screw_midpoint_enc_3': 0.001, 'loss_ce_enc_4': 5, 'loss_screw_head_enc_4': 0.01, 'loss_screw_tip_enc_4': 0.01, 'loss_screw_midpoint_enc_4': 0.001, 'loss_ce_backbone': 5, 'loss_screw_head_backbone': 0.01, 'loss_screw_tip_backbone': 0.01, 'loss_screw_midpoint_backbone': 0.001, 'loss_mask_prediction': 1}
 
 """
 Modules to compute the matching cost and solve the corresponding LSAP.
 """
 import torch
-from scipy.optimize import linear_sum_assignment
 from torch import nn
+from scipy.optimize import linear_sum_assignment
 
 from utils.screw_ops import screw_cost_mid, screw_head_tip_to_midpoint, screw_cost_head, screw_cost_tip
 
 
 class HungarianMatcher(nn.Module):
-    """This class computes an assignment between the targets and the predictions of the network
+    """
+    This class computes an assignment between the targets and the predictions of the network.
 
     For efficiency reasons, the targets don't include the no_object. Because of this, in general,
     there are more predictions than targets. In this case, we do a 1-to-1 matching of the best predictions,
@@ -41,10 +40,22 @@ class HungarianMatcher(nn.Module):
             cost_giou: This is the relative weight of the giou loss of the bounding box in the matching cost
         """
         super().__init__()
+
         self.cost_class = cost_class
         self.cost_screw_mid = cost_screw_mid
         self.cost_screw_head_tip = cost_screw_head_tip
+
         assert cost_class != 0 or cost_screw_mid != 0 or cost_screw_head_tip != 0, "all costs cant be 0"
+
+        ####################################################################################
+        # Just for debugging and inspection ...
+        print("#######################################")
+        print("\nMATCHER:")
+        print(f"cost_class = {self.cost_class}")
+        print(f"cost_screw_mid = {self.cost_screw_mid}")
+        print(f"cost_screw_head_tip = {self.cost_screw_head_tip}")
+        print("#######################################")
+        ####################################################################################
 
     def forward(self, outputs, targets):
         """ Performs the matching
