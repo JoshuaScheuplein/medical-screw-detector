@@ -139,9 +139,9 @@ from pathlib import Path
 import numpy as np
 
 
-# scan_names = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10'] # Original code
+scan_names = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10'] # Original code
 
-scan_names = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
+# scan_names = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
 
 def compute_metrics(results_dir: Path):
