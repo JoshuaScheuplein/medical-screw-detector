@@ -89,13 +89,13 @@ class HungarianMatcher(nn.Module):
 
             ####################################################################################
             # Just for debugging and inspection ...
-            print("#######################################")
-            print("\nMATCHER:")
-            print(f"\ntgt_ids = {tgt_ids.shape}")
-            print(f"tgt_ids = {tgt_ids}")
-            print(f"\ntgt_screws = {tgt_screws.shape}")
-            print(f"tgt_screws = {tgt_screws}")
-            print("#######################################")
+            # print("#######################################")
+            # print("\nMATCHER:")
+            # print(f"\ntgt_ids = {tgt_ids.shape}")
+            # print(f"tgt_ids = {tgt_ids}")
+            # print(f"\ntgt_screws = {tgt_screws.shape}")
+            # print(f"tgt_screws = {tgt_screws}")
+            # print("#######################################")
             ####################################################################################
 
             # Compute the classification cost.
