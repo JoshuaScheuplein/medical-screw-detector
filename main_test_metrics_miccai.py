@@ -137,34 +137,33 @@ import argparse
 from pathlib import Path
 
 
-sample_names = ['Ankle18_le_512x512x512_1', 'Ankle18_le_512x512x512_2', 'Ankle18_le_512x512x512_3',
-                'Ankle19_le_512x512x512_1', 'Ankle19_le_512x512x512_2', 'Ankle19_le_512x512x512_3',
-                'Ankle20_le_512x512x512_1', 'Ankle20_le_512x512x512_2', 'Ankle20_le_512x512x512_3',
-                'Wrist08_le_512x512x512_1', 'Wrist08_le_512x512x512_2', 'Wrist08_le_512x512x512_3',
-                'Wrist09_le_512x512x512_1', 'Wrist09_le_512x512x512_2', 'Wrist09_le_512x512x512_3',
-                'Wrist10_le_512x512x512_1', 'Wrist10_le_512x512x512_2', 'Wrist10_le_512x512x512_3']
+# scan_names = ['Ankle18', 'Ankle19', 'Ankle20', 'Wrist08', 'Wrist09', 'Wrist10'] # Original code
+
+scan_names = ['Ankle21', 'Ankle23', 'Elbow04', 'Wrist11', 'Wrist12', 'Wrist13', 'Spine06', 'Spine07', 'Ankle19', 'Wrist08', 'Wrist09', 'Wrist10'] # Adapted code
 
 
 def compute_metrics(results_dir: Path):
 
     assert (results_dir.is_dir() == True) and (str(results_dir).split("/")[-1] == "V1-1to3objects-400projections-circular")
 
-    for i, sample in enumerate(sample_names):
-        print("\n##################################################")
-        print(f"Processing test sample '{sample}' ...")
+    for scan in scan_names:
+        for item in ["_le_512x512x512_1", "_le_512x512x512_2", "_le_512x512x512_3"]:
+            sample = scan + item
+            print("\n#####################################################")
+            print(f"Processing test sample '{sample}' ...")
 
-        file_path = results_dir / Path(sample) / "predictions_test_50.json"
-        assert file_path.is_file() == True, f"Missing prediction file for sample '{sample}' ..."
-        with open(file_path, 'r') as f:
-            sample_data = json.load(f)
-            sample_data = sample_data["landmarks2d"]
+            file_path = results_dir / Path(sample) / "predictions_test_50.json"
+            assert file_path.is_file() == True, f"Missing prediction file for sample '{sample}' ..."
+            with open(file_path, 'r') as f:
+                sample_data = json.load(f)
+                sample_data = sample_data["landmarks2d"]
 
-        views = list(sample_data.keys())
-        print(f"Found {len(views)} views in total for this sample: {views}")
-        for view in views:
-            predictions, targets = sample_data[view]["predictions"], sample_data[view]["targets"]
-            num_predictions, num_targets = len(predictions.keys()), len(targets.keys())
-            print(f"{view}: num_predictions = {num_predictions} & num_targets = {num_targets}")
+            views = list(sample_data.keys())
+            print(f"Found {len(views)} views in total for this sample: {views}")
+            for view in views:
+                predictions, targets = sample_data[view]["predictions"], sample_data[view]["targets"]
+                num_predictions, num_targets = len(predictions.keys()), len(targets.keys())
+                print(f"{view}: num_predictions = {num_predictions} & num_targets = {num_targets}")
 
     return
 
