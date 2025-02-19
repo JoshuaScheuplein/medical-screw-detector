@@ -30,32 +30,32 @@ class DeformableDETRLightning(LightningModule):
         return self.generic_step(batch, mode="test")
 
     """ This code was additionally added """
-    def test_epoch_end(self, outputs):
-        # Option 2: Aggregate outputs manually if needed.
-        # Here `outputs` is a list with the return of test_step for each batch.
-        # For example, if you returned counts (TP, FP, FN), you can do:
-        total_TP = sum(x["TP"] for x in outputs if "TP" in x)
-        total_FP = sum(x["FP"] for x in outputs if "FP" in x)
-        total_FN = sum(x["FN"] for x in outputs if "FN" in x)
+    # def test_epoch_end(self, outputs):
+    #     # Option 2: Aggregate outputs manually if needed.
+    #     # Here `outputs` is a list with the return of test_step for each batch.
+    #     # For example, if you returned counts (TP, FP, FN), you can do:
+    #     total_TP = sum(x["TP"] for x in outputs if "TP" in x)
+    #     total_FP = sum(x["FP"] for x in outputs if "FP" in x)
+    #     total_FN = sum(x["FN"] for x in outputs if "FN" in x)
 
-        if total_TP + total_FP > 0:
-            precision = total_TP / (total_TP + total_FP)
-        else:
-            precision = 0.0
-        if total_TP + total_FN > 0:
-            recall = total_TP / (total_TP + total_FN)
-        else:
-            recall = 0.0
-        if precision + recall > 0:
-            f1 = 2 * (precision * recall) / (precision + recall)
-        else:
-            f1 = 0.0
+    #     if total_TP + total_FP > 0:
+    #         precision = total_TP / (total_TP + total_FP)
+    #     else:
+    #         precision = 0.0
+    #     if total_TP + total_FN > 0:
+    #         recall = total_TP / (total_TP + total_FN)
+    #     else:
+    #         recall = 0.0
+    #     if precision + recall > 0:
+    #         f1 = 2 * (precision * recall) / (precision + recall)
+    #     else:
+    #         f1 = 0.0
 
-        # self.log("epoch_test_precision", precision)
-        # self.log("epoch_test_recall", recall)
-        # self.log("epoch_test_f1", f1)
-        # You can also print them if you wish.
-        print(f"Test Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
+    #     # self.log("epoch_test_precision", precision)
+    #     # self.log("epoch_test_recall", recall)
+    #     # self.log("epoch_test_f1", f1)
+    #     # You can also print them if you wish.
+    #     print(f"Test Precision: {precision:.4f}, Recall: {recall:.4f}, F1: {f1:.4f}")
 
     ########################################################################################################
 
