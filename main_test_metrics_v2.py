@@ -170,7 +170,7 @@ def main(args):
                       enable_progress_bar=True, # Additionally added
                       callbacks=[prediction_logging_callback], # Adapted Code
                       plugins=plugins,
-                      detect_anomaly=True, # Additionally added
+                      detect_anomaly=False, # Only useful for debugging
                       )
 
     assert os.path.isfile(args.checkpoint_file), "Could not find model checkpoint!"
