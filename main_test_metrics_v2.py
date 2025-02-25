@@ -144,6 +144,14 @@ def main(args):
     print(f"Number of batches in 'Val' Dataloader: {len(data_loader_val)}")
     print(f"Number of batches in 'Test' Dataloader: {len(data_loader_test)}")
 
+    for dataset in [dataset_train, dataset_val, dataset_test]:
+        for volume_name in dataset.volume_names:
+            prediction_path = os.path.join(args.result_dir, args.dataset_name, volume_name)
+            # os.makedirs(prediction_path, exist_ok=True)
+            Path(prediction_path).mkdir(parents=True, exist_ok=True)
+
+    prediction_logging_callback = PredictionLoggingCallback(args.result_dir, batch_size=args.batch_size)
+
     #########################
     # Load the model
     #########################
@@ -160,6 +168,7 @@ def main(args):
                       num_nodes=1,
                       default_root_dir=args.result_dir,
                       enable_progress_bar=True, # Additionally added
+                      callbacks=[prediction_logging_callback], # Adapted Code
                       plugins=plugins,
                       detect_anomaly=True, # Additionally added
                       )
