@@ -143,7 +143,8 @@ def get_helper_parser():
     parser.add_argument('--dataset_name', default="V1-1to3objects-400projections-circular", type=str, help='Dataset name')
     parser.add_argument('--job_ID', default="Test_Job", type=str, help='Unique job ID')
     parser.add_argument('--num_gpus', default=DefaultArgs.num_gpus, type=int, help='Number of GPUs per node')
-    parser.add_argument('--num_nodes', default=DefaultArgs.num_nodes, type=int, help='Number of available nodes')                         
+    parser.add_argument('--num_nodes', default=DefaultArgs.num_nodes, type=int, help='Number of available nodes')
+    parser.add_argument('--imagenet_normalization', default=DefaultArgs.imagenet_normalization, action='store_true')                         
 
     return parser
 

@@ -44,6 +44,41 @@ class MedicalViT(BaseBackbone):
 
         else:
             raise ValueError(f"MedicalViT '{args.backbone}' not supported.")
+        
+        # Decide whether additional ImageNet normalization should be applied
+        if args.imagenet_normalization:
+            print("\n###############################################################################################")
+            print("\nWARNING: Additional data normalization for evaluating ImageNet checkpoint will be applied! ...")
+            print("\n###############################################################################################")
+            self.transform = T.Compose([
+
+                # Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
+                # to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                # if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1)
+                # or if the numpy.ndarray has dtype = np.uint8
+                T.ToTensor(),
+
+                # Additional normalization for evaluation of ImageNet checkpoints
+                T.Normalize(mean=(0.2831, 0.2831, 0.2831), std=(0.2502, 0.2502, 0.2502)), # V1-1to3objects-400projections-circular statistics
+                # T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)), # ImageNet statistics
+
+                # Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0]
+                # lambda x: 255.0 * x,  # scale by 255
+
+            ])
+        else:
+            self.transform = T.Compose([
+
+                # Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
+                # to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+                # if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1)
+                # or if the numpy.ndarray has dtype = np.uint8
+                T.ToTensor(),
+
+                # Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0]
+                # lambda x: 255.0 * x,  # scale by 255
+
+            ])
 
         super().__init__(num_channels=self.channels, image_size=self.image_size, embedding_size=self.embedding_size, args=args)
 
@@ -83,20 +118,7 @@ class MedicalViT(BaseBackbone):
             img = np.repeat(img, 3, axis=0)
             img = np.transpose(img, (1, 2, 0))
 
-            transform = T.Compose([
-
-                # Converts a PIL Image or numpy.ndarray (H x W x C) in the range [0, 255]
-                # to a torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
-                # if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr, RGBA, CMYK, 1)
-                # or if the numpy.ndarray has dtype = np.uint8
-                T.ToTensor(),
-
-                # Note: DINO ResNet was trained on np.float32 images in range [0.0,1.0]
-                # lambda x: 255.0 * x,  # scale by 255
-
-            ])
-
-            transformed_images.append(transform(img))
+            transformed_images.append(self.transform(img))
 
         img_batch = torch.stack(transformed_images)
         img_batch = img_batch.to(self.args.device)
