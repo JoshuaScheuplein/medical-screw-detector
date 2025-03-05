@@ -34,9 +34,10 @@ class MedicalResNet(BaseBackbone):
             raise ValueError(f"MedicalResNet '{args.backbone}' not supported.")
 
         self.model_type = args.backbone.lower().replace("medical_", "")
+        self.imagenet_normalization = args.imagenet_normalization
 
         # Decide whether additional ImageNet normalization should be applied
-        if args.imagenet_normalization:
+        if self.imagenet_normalization:
             print("\n###############################################################################################")
             print("\nWARNING: Additional data normalization for evaluating ImageNet checkpoint will be applied! ...")
             print("\n###############################################################################################")
@@ -77,7 +78,11 @@ class MedicalResNet(BaseBackbone):
         checkpoint = torch.load(Path(self.checkpoint_file), map_location="cpu")
         teacher_checkpoint = checkpoint['teacher']
         # Discard all weights and parameters belonging to DINOHead() ...
-        teacher_dict = {k.replace('module.backbone.', ''): v for k, v in teacher_checkpoint.items() if k.startswith('module.backbone.')}
+        if self.imagenet_normalization:
+            teacher_dict = {k.replace('backbone.', ''): v for k, v in teacher_checkpoint.items() if k.startswith('backbone.')}
+        else:
+            # For some reason DAX checkpoints of ResNet backbones provide the additional prefix 'module.' in all checkpoint keys
+            teacher_dict = {k.replace('module.backbone.', ''): v for k, v in teacher_checkpoint.items() if k.startswith('module.backbone.')}
 
         assert self.model_type in models.__dict__.keys()
         resnet = models.__dict__[self.model_type](weights=None)
